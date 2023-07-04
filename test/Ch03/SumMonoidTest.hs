@@ -1,4 +1,4 @@
-module Ch03.MonoidTest (tests) where
+module Ch03.SumMonoidTest (tests) where
 
 import Data.Semigroup
 import Hedgehog as H
@@ -34,7 +34,7 @@ prop_identity =
 tests :: TestTree
 tests =
   testGroup
-    "Monoid"
+    "Sum Monoid"
     [ testProperty "compose" prop_compose,
       testProperty "identity" prop_identity
     ]
