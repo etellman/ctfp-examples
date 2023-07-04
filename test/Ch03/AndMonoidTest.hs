@@ -1,30 +1,36 @@
-module Ch03.SumMonoidTest (tests) where
+module Ch03.AndMonoidTest (tests) where
 
-import Data.Semigroup
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
-import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
+
+newtype And = And {andValue :: Bool} deriving (Eq, Ord, Show)
+
+instance Semigroup And where
+  (And x) <> (And y) = And (x && y)
+
+instance Monoid And where
+  mempty = And True
 
 prop_compose :: Property
 prop_compose =
   property $ do
     -- set up
-    i <- forAll $ Gen.int (Range.constant 0 1000)
-    j <- forAll $ Gen.int (Range.constant 0 1000)
+    x <- forAll $ Gen.bool
+    y <- forAll $ Gen.bool
 
-    let f = Sum i
-        g = Sum j
+    let f = And x
+        g = And y
 
     -- exercise and verify
-    f <> g === Sum (i + j)
+    f <> g === And (x && y)
 
 prop_identity :: Property
 prop_identity =
   property $ do
     -- set up
-    f <- forAll $ Sum <$> Gen.int (Range.constant 0 1000)
+    f <- forAll $ And <$> Gen.bool
 
     -- exercise and verify
     f <> mempty === f
@@ -33,7 +39,7 @@ prop_identity =
 tests :: TestTree
 tests =
   testGroup
-    "Sum"
+    "And"
     [ testProperty "compose" prop_compose,
       testProperty "identity" prop_identity
     ]
