@@ -1,5 +1,6 @@
 module Ch04.WriterTest (tests) where
 
+import Assertions.Hedgehog
 import Ch04.Writer
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
@@ -7,31 +8,31 @@ import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
 
+add :: String -> Int -> Int -> Writer Int
+add s x y = (x + y, s)
+
 prop_compose :: Property
 prop_compose =
   property $ do
     -- set up
-    i <- forAll $ Gen.int (Range.constant 0 1000)
-    let f x = (x + 1, "f") :: (Int, String)
+    n <- forAll $ Gen.int (Range.constant (-1000) 1000)
+    let f = add "f" n
         g x = (even x, "g")
 
-    -- exercise
-    let fg = f >=> g
-
-    -- verify
-    fg i === (even (i + 1), "g . f")
+    -- exercise and verify
+    f >=> g @== \x -> (even (x + n), "f g")
 
 prop_identity :: Property
 prop_identity =
   property $ do
     -- set up
-    i <- forAll $ Gen.int (Range.constant 0 1000)
-    let f x = (x + 1, "f") :: (Int, String)
+    n <- forAll $ Gen.int (Range.constant (-1000) 1000)
+    let f = add "f" n
         writerId x = (x, "id")
 
     -- verify
-    (f >=> writerId) i === (i + 1, "id . f")
-    (writerId >=> f) i === (i + 1, "f . id")
+    f >=> writerId @== add "f id" n
+    writerId >=> f @== add "id f" n
 
 tests :: TestTree
 tests =

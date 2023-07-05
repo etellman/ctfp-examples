@@ -1,4 +1,8 @@
-module Ch04.Writer ((>=>)) where
+module Ch04.Writer
+  ( Writer,
+    (>=>),
+  )
+where
 
 import Text.Printf
 
@@ -9,4 +13,4 @@ type Writer a = (a, String)
 (f >=> g) x =
   let (y, s1) = f x
       (z, s2) = g y
-   in (z, printf "%s . %s" s2 s1)
+   in (z, printf "%s %s" s1 s2)
