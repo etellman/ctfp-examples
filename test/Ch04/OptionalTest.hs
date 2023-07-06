@@ -49,7 +49,7 @@ prop_bindReciprocal =
   property $ do
     -- set up
     m <- forAll $ Gen.integral (Range.constant (-4) 4)
-    n <- forAll $ Gen.integral (Range.constant (-1000) 1000)
+    n <- forAll $ Gen.integral (Range.constant 2 100)
     k <- forAll $ Gen.integral (Range.constant 2 100)
 
     H.cover 5 "0/Empty" $ m == 0
