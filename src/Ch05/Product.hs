@@ -10,5 +10,5 @@ factorize f g = \x -> (f x, g x)
 coFactorize :: (a -> c) -> (b -> c) -> (Either a b -> c)
 coFactorize f g = \x ->
   case (x) of
-    (Left x') -> f x'
-    (Right x') -> g x'
+    (Left y) -> f y
+    (Right z) -> g z

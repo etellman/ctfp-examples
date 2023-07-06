@@ -13,11 +13,10 @@ prop_product :: Property
 prop_product =
   property $ do
     -- set up
-    m <- forAll $ Gen.int (Range.constant 2 100)
     n <- forAll $ Gen.int (Range.constant 2 100)
 
-    let f = (+ m)
-        g = (* n)
+    let f = (+ n)
+        g = chr . (+ 20) . (flip mod 40) . abs
 
     -- exercise
     let p = factorize f g
@@ -38,11 +37,8 @@ prop_coProduct =
     let cp = coFactorize f g
 
     -- verify
-    x <- forAll $ Gen.int (Range.constant 2 100)
-    cp (Left x) === f x
-
-    c <- forAll $ Gen.alpha
-    cp (Right c) === g c
+    (cp . Left) @== f
+    (cp . Right) `eqCharF` g
 
 tests :: TestTree
 tests =

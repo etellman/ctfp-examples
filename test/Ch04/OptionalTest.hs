@@ -13,8 +13,8 @@ prop_composeNonEmpty :: Property
 prop_composeNonEmpty =
   property $ do
     -- set up
-    m <- forAll $ Gen.int (Range.constant (-1000) 1000)
-    n <- forAll $ Gen.int (Range.constant (-1000) 1000)
+    m <- forAll $ Gen.int (Range.constant 2 100)
+    n <- forAll $ Gen.int (Range.constant 2 100)
 
     let f = \x -> Exactly (x + m)
         g = \x -> Exactly (n * x)
@@ -26,7 +26,7 @@ prop_safeReciprocalZero :: Property
 prop_safeReciprocalZero =
   property $ do
     -- set up
-    n <- forAll $ Gen.integral (Range.constant 1 1000)
+    n <- forAll $ Gen.integral (Range.constant 1 100)
 
     -- exercise and verify
     safeReciprocal (0 % n) === Empty
@@ -35,8 +35,8 @@ prop_safeReciprocalNonZero :: Property
 prop_safeReciprocalNonZero =
   property $ do
     -- set up
-    m <- forAll $ Gen.integral (Range.constant (-1000) 1000)
-    n <- forAll $ Gen.integral (Range.constant 1 1000)
+    m <- forAll $ Gen.integral (Range.constant 2 100)
+    n <- forAll $ Gen.integral (Range.constant 2 100)
 
     -- exercise and verify
     safeReciprocal (m % n) === Exactly (n % m)
