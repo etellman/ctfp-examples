@@ -1,4 +1,4 @@
-module Ch07.ListFunctorTest (tests) where
+module Ch07.ListTest (tests) where
 
 import Assertions.Hedgehog
 import Hedgehog as H
@@ -28,7 +28,7 @@ prop_compose =
 tests :: TestTree
 tests =
   testGroup
-    "List Functor"
+    "List"
     [ testProperty "identity" prop_identity,
       testProperty "compose" prop_compose
     ]
