@@ -2,6 +2,7 @@ module Assertions.Hedgehog
   ( (==>),
     (@==),
     eqCharF,
+    eqIntsF,
   )
 where
 
@@ -22,6 +23,16 @@ eqCharF :: (Show a, Eq a) => (Char -> a) -> (Char -> a) -> PropertyT IO ()
 f `eqCharF` g = do
   c <- forAll $ Gen.alpha
   f c === g c
+
+-- | verifies that f(x) == g(x) for a reasonable number of xs
+eqIntsF :: (Show a, Eq a) => ([Int] -> a) -> ([Int] -> a) -> PropertyT IO ()
+f `eqIntsF` g = do
+  xs <- forAll $ Gen.list (Range.constant 0 10) (Gen.int $ Range.constant 0 100)
+
+  cover 2 "empty" $ null xs
+  cover 70 "non-empty" $ (not . null) xs
+
+  f xs === g xs
 
 (==>) :: MonadTest m => Bool -> Bool -> m ()
 (==>) a b = assert $ not a || b
