@@ -3,6 +3,7 @@ module Assertions.Hedgehog
     (@==),
     eqCharF,
     eqIntsF,
+    eqPairF,
   )
 where
 
@@ -33,6 +34,14 @@ f `eqIntsF` g = do
   cover 70 "non-empty" $ (not . null) xs
 
   f xs === g xs
+
+-- | verifies that f(x) == g(x) for a reasonable number of xs
+eqPairF :: (Show a, Eq a) => ((Int, Int) -> a) -> ((Int, Int) -> a) -> PropertyT IO ()
+f `eqPairF` g = do
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  y <- forAll $ Gen.int (Range.constant (-100) 100)
+
+  f (x, y) === g (x, y)
 
 (==>) :: MonadTest m => Bool -> Bool -> m ()
 (==>) a b = assert $ not a || b
