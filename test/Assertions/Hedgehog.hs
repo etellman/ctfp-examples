@@ -15,6 +15,8 @@ f @== g = do
   x <- forAll $ Gen.int (Range.constant (-20) 20)
   f x === g x
 
+infixr 0 @==
+
 -- | verifies that f(x) == g(x) for a reasonable number of xs
 eqCharF :: (Show a, Eq a) => (Char -> a) -> (Char -> a) -> PropertyT IO ()
 f `eqCharF` g = do
