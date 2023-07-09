@@ -1,6 +1,6 @@
-module Ch07.ConstantTest (tests) where
+module Ch07.ConstTest (tests) where
 
-import Data.Functor.Constant
+import Data.Functor.Const
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
@@ -14,7 +14,7 @@ prop_identity =
     x <- forAll $ Gen.int (Range.constant 2 100)
 
     -- exercise and verify
-    fmap id (Constant x) === Constant (id x)
+    fmap id (Const x) === Const (id x)
 
 prop_compose :: Property
 prop_compose =
@@ -28,7 +28,7 @@ prop_compose =
         g = (* n)
 
     -- exercise and verify
-    fmap (f . g) (Constant x) === (fmap f . fmap g) (Constant x)
+    fmap (f . g) (Const x) === (fmap f . fmap g) (Const x)
 
 tests :: TestTree
 tests =
