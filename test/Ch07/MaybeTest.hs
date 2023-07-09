@@ -6,39 +6,47 @@ import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
 
+eqM :: (Maybe Int -> Maybe Int) -> (Int -> Int) -> PropertyT IO ()
+eqM f' f = do
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  f' (Just x) === Just (f x)
+
 prop_identity :: Property
 prop_identity =
   property $ do
-    -- set up
-    x <- forAll $ Gen.int (Range.constant 2 100)
+    fmap id `eqM` id
+    fmap id Nothing === (Nothing :: Maybe Int)
 
-    let idInt = id :: (Int -> Int)
+prop_morphism :: Property
+prop_morphism =
+  property $ do
+    -- set up
+    n <- forAll $ Gen.int (Range.constant 2 100)
+    let f = (+ n)
 
     -- exercise and verify
-    fmap idInt (Just x) === Just (idInt x)
-    fmap idInt Nothing === Nothing
+    fmap f `eqM` f
+    (fmap f) Nothing === Nothing
 
 prop_compose :: Property
 prop_compose =
   property $ do
     -- set up
-    x <- forAll $ Gen.int (Range.constant 2 100)
     m <- forAll $ Gen.int (Range.constant 2 100)
     n <- forAll $ Gen.int (Range.constant 2 100)
 
     let f = (+ m)
         g = (* n)
-        f' = fmap f :: Maybe Int -> Maybe Int
-        g' = fmap g :: Maybe Int -> Maybe Int
 
     -- exercise and verify
-    (f' . g') (Just x) === Just ((f . g) x)
-    (f' . g') Nothing === Nothing
+    (fmap f . fmap g) `eqM` (f . g)
+    (fmap f . fmap g) Nothing === Nothing
 
 tests :: TestTree
 tests =
   testGroup
     "Maybe"
     [ testProperty "identity" prop_identity,
+      testProperty "morphism" prop_morphism,
       testProperty "compose" prop_compose
     ]
