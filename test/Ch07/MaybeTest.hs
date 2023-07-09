@@ -11,11 +11,12 @@ eq f' f = do
   x <- forAll $ Gen.int (Range.constant (-100) 100)
   f' (Just x) === Just (f x)
 
-prop_identity :: Property
-prop_identity =
-  property $ do
-    fmap id `eq` id
-    fmap id Nothing === (Nothing :: Maybe Int)
+verify :: (Int -> Int) -> PropertyT IO ()
+verify f = do
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+
+  (fmap f) (Just x) === Just (f x)
+  (fmap f) Nothing === Nothing
 
 prop_morphism :: Property
 prop_morphism =
@@ -25,8 +26,7 @@ prop_morphism =
     let f = (+ n)
 
     -- exercise and verify
-    fmap f `eq` f
-    (fmap f) Nothing === Nothing
+    verify f
 
 prop_compose :: Property
 prop_compose =
@@ -46,7 +46,7 @@ tests :: TestTree
 tests =
   testGroup
     "Maybe"
-    [ testProperty "identity" prop_identity,
+    [ testProperty "identity" $ property (verify id),
       testProperty "morphism" prop_morphism,
       testProperty "compose" prop_compose
     ]
