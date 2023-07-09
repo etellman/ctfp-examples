@@ -35,7 +35,7 @@ f `eqIntsF` g = do
 
   f xs === g xs
 
--- | verifies that f(x) == g(x) for a reasonable number of xs
+-- | verifies that f(x) == g(x) for a reasonable number of pairs
 eqPairF :: (Show a, Eq a) => ((Int, Int) -> a) -> ((Int, Int) -> a) -> PropertyT IO ()
 f `eqPairF` g = do
   x <- forAll $ Gen.int (Range.constant (-100) 100)
