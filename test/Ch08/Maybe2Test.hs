@@ -66,6 +66,26 @@ prop_fromMaybe =
     fromMaybe (Just x) === just x
     fromMaybe Nothing === (nothing :: Maybe2 Int)
 
+prop_toFromMaybe :: Property
+prop_toFromMaybe =
+  property $ do
+    -- set up
+    x <- forAll $ Gen.int (Range.constant 2 100)
+
+    -- exercise and verify
+    (fromMaybe . toMaybe) (just x) === just x
+    (fromMaybe . toMaybe) nothing === (nothing :: Maybe2 Int)
+
+prop_fromToMaybe :: Property
+prop_fromToMaybe =
+  property $ do
+    -- set up
+    x <- forAll $ Gen.int (Range.constant 2 100)
+
+    -- exercise and verify
+    (toMaybe . fromMaybe) (Just x) === Just x
+    (toMaybe . fromMaybe) Nothing === (Nothing :: Maybe Int)
+
 tests :: TestTree
 tests =
   testGroup
@@ -74,5 +94,7 @@ tests =
       testProperty "morphism" prop_morphism,
       testProperty "compose" prop_compose,
       testProperty "to Maybe" prop_toMaybe,
-      testProperty "from Maybe" prop_fromMaybe
+      testProperty "from Maybe" prop_fromMaybe,
+      testProperty "to/from Maybe" prop_toFromMaybe,
+      testProperty "from/to Maybe" prop_fromToMaybe
     ]
