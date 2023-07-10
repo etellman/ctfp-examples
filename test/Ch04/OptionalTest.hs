@@ -52,7 +52,8 @@ prop_bindReciprocal =
     n <- forAll $ Gen.integral (Range.constant 2 100)
     k <- forAll $ Gen.integral (Range.constant 2 100)
 
-    H.cover 5 "0/Empty" $ m == 0
+    H.cover 1 "empty" $ m == 0
+    H.cover 50 "non-empty" $ m /= 0
 
     -- exercise and verify
     (safeReciprocal >=> multiplyRational k) (m % n) === safeReciprocal (m % (n * k))

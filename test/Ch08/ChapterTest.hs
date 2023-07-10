@@ -1,6 +1,6 @@
 module Ch08.ChapterTest (chapterTests) where
 
-import Ch08.BiCompTest
+import Ch08.Maybe2Test
 import Ch08.BifunctorTest
 import Test.Tasty
 
@@ -9,5 +9,5 @@ chapterTests =
   testGroup
     "Chapter 8"
     [ Ch08.BifunctorTest.tests,
-      Ch08.BiCompTest.tests
+      Ch08.Maybe2Test.tests
     ]
