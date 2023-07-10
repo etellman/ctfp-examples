@@ -6,6 +6,7 @@ import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import Test.Tasty.HUnit
 
 (-->) :: (Int -> Int) -> (Maybe2 Int -> Maybe2 Int) -> PropertyT IO ()
 (-->) f f' = do
@@ -66,25 +67,23 @@ prop_fromMaybe =
     fromMaybe (Just x) === just x
     fromMaybe Nothing === (nothing :: Maybe2 Int)
 
-prop_toFromMaybe :: Property
-prop_toFromMaybe =
+prop_maybe2RoundTrip :: Property
+prop_maybe2RoundTrip =
   property $ do
     -- set up
     x <- forAll $ Gen.int (Range.constant 2 100)
 
     -- exercise and verify
     (fromMaybe . toMaybe) (just x) === just x
-    (fromMaybe . toMaybe) nothing === (nothing :: Maybe2 Int)
 
-prop_fromToMaybe :: Property
-prop_fromToMaybe =
+prop_maybeRoundTrip :: Property
+prop_maybeRoundTrip =
   property $ do
     -- set up
     x <- forAll $ Gen.int (Range.constant 2 100)
 
     -- exercise and verify
     (toMaybe . fromMaybe) (Just x) === Just x
-    (toMaybe . fromMaybe) Nothing === (Nothing :: Maybe Int)
 
 tests :: TestTree
 tests =
@@ -95,6 +94,10 @@ tests =
       testProperty "compose" prop_compose,
       testProperty "to Maybe" prop_toMaybe,
       testProperty "from Maybe" prop_fromMaybe,
-      testProperty "to/from Maybe" prop_toFromMaybe,
-      testProperty "from/to Maybe" prop_fromToMaybe
+      testProperty "Maybe -> Maybe2 -> Maybe (Just)" prop_maybeRoundTrip,
+      testCase "Maybe -> Maybe2 -> Maybe (Nothing)" $
+        (toMaybe . fromMaybe) Nothing @=? (Nothing :: Maybe Int),
+      testProperty "Maybe2 -> Maybe -> Maybe2 (Just)" prop_maybe2RoundTrip,
+      testCase "Maybe2 -> Maybe -> Maybe2 (Nothing)" $
+        (toMaybe . fromMaybe) Nothing @=? (Nothing :: Maybe Int)
     ]
