@@ -12,6 +12,8 @@ import Test.Tasty.Hedgehog
   x <- forAll $ Gen.int (Range.constant (-100) 100)
   f' (just x) === just (f x)
 
+infixr 0 -->
+
 verify :: (Int -> Int) -> PropertyT IO ()
 verify f = do
   x <- forAll $ Gen.int (Range.constant (-100) 100)
@@ -40,8 +42,8 @@ prop_compose =
         g = (* n)
 
     -- exercise and verify
-    (f . g) --> (lift f . lift g)
-    (f . g) --> (lift (f . g))
+    f . g --> lift f . lift g
+    f . g --> lift (f . g)
     (lift f . lift g) nothing === nothing
 
 prop_toMaybe :: Property
