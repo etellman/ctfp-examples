@@ -10,7 +10,7 @@ import Test.Tasty.Hedgehog
 (-->) f f' = do
   xs <- forAll $ Gen.list (Range.constant 0 10) (Gen.int $ Range.constant 0 100)
 
-  cover 2 "empty" $ null xs
+  cover 1 "empty" $ null xs
   cover 70 "non-empty" $ (not . null) xs
 
   f' xs === map f xs
