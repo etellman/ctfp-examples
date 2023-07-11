@@ -7,15 +7,14 @@ import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
 
-eq :: ((Int -> Int) -> (Int -> Int)) -> (Int -> Int) -> PropertyT IO ()
-eq f' f = do
+(-->) :: (Int -> Int) -> ((Int -> Int) -> (Int -> Int)) -> PropertyT IO ()
+(-->) f f' = do
   k <- forAll $ Gen.int (Range.constant (-100) 100)
   let h = (* k)
 
   f' h @== f . h
 
-prop_identity :: Property
-prop_identity = property $ (fmap id) `eq` id
+infixr 0 -->
 
 prop_morphism :: Property
 prop_morphism =
@@ -25,7 +24,7 @@ prop_morphism =
     let f = (+ n)
 
     -- exercise and verify
-    fmap f `eq` f
+    f --> fmap f
 
 prop_compose :: Property
 prop_compose =
@@ -38,13 +37,13 @@ prop_compose =
         g = (* n)
 
     -- exercise and verify
-    (fmap f . fmap g) `eq` (f . g)
+    f . g --> fmap f . fmap g
 
 tests :: TestTree
 tests =
   testGroup
     "Reader"
-    [ testProperty "identity" prop_identity,
+    [ testProperty "identity" $ property $ id --> fmap id,
       testProperty "morphism" prop_morphism,
       testProperty "compose" prop_compose
     ]
