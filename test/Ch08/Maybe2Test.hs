@@ -11,16 +11,10 @@ import Test.Tasty.HUnit
 (-->) :: (Int -> Int) -> (Maybe2 Int -> Maybe2 Int) -> PropertyT IO ()
 (-->) f f' = do
   x <- forAll $ Gen.int (Range.constant (-100) 100)
+  f' nothing === nothing
   f' (just x) === just (f x)
 
 infixr 0 -->
-
-verify :: (Int -> Int) -> PropertyT IO ()
-verify f = do
-  x <- forAll $ Gen.int (Range.constant (-100) 100)
-
-  (lift f) nothing === nothing
-  (lift f) (just x) === just (f x)
 
 prop_morphism :: Property
 prop_morphism =
@@ -30,7 +24,7 @@ prop_morphism =
     let f = (+ n)
 
     -- exercise and verify
-    verify f
+    f --> lift f
 
 prop_compose :: Property
 prop_compose =
@@ -44,8 +38,6 @@ prop_compose =
 
     -- exercise and verify
     f . g --> lift f . lift g
-    f . g --> lift (f . g)
-    (lift f . lift g) nothing === nothing
 
 prop_toMaybe :: Property
 prop_toMaybe =
@@ -89,7 +81,7 @@ tests :: TestTree
 tests =
   testGroup
     "Maybe2"
-    [ testProperty "identity" $ property (verify id),
+    [ testProperty "identity" $ property $ id --> lift id,
       testProperty "morphism" prop_morphism,
       testProperty "compose" prop_compose,
       testProperty "to Maybe" prop_toMaybe,
