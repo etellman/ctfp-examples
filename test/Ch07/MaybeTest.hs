@@ -6,17 +6,13 @@ import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
 
-eq :: (Maybe Int -> Maybe Int) -> (Int -> Int) -> PropertyT IO ()
-eq f' f = do
+(-->) :: (Int -> Int) -> (Maybe Int -> Maybe Int) -> PropertyT IO ()
+(-->) f f' = do
   x <- forAll $ Gen.int (Range.constant (-100) 100)
   f' (Just x) === Just (f x)
+  f' Nothing === Nothing
 
-verify :: (Int -> Int) -> PropertyT IO ()
-verify f = do
-  x <- forAll $ Gen.int (Range.constant (-100) 100)
-
-  (fmap f) (Just x) === Just (f x)
-  (fmap f) Nothing === Nothing
+infixr 0 -->
 
 prop_morphism :: Property
 prop_morphism =
@@ -26,7 +22,7 @@ prop_morphism =
     let f = (+ n)
 
     -- exercise and verify
-    verify f
+    f --> fmap f
 
 prop_compose :: Property
 prop_compose =
@@ -39,14 +35,13 @@ prop_compose =
         g = (* n)
 
     -- exercise and verify
-    (fmap f . fmap g) `eq` (f . g)
-    (fmap f . fmap g) Nothing === Nothing
+    f . g --> fmap f . fmap g
 
 tests :: TestTree
 tests =
   testGroup
     "Maybe"
-    [ testProperty "identity" $ property (verify id),
+    [ testProperty "identity" $ property $ id --> fmap id,
       testProperty "morphism" prop_morphism,
       testProperty "compose" prop_compose
     ]
