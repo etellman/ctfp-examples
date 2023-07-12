@@ -1,6 +1,7 @@
 module Ch07.ReaderTest (tests) where
 
 import Assertions.Hedgehog
+import Control.Monad.Reader
 import Data.Char
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
@@ -8,10 +9,11 @@ import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
 
-(-->) :: (Char -> Int) -> ((Char -> Char) -> (Char -> Int)) -> PropertyT IO ()
+(-->) :: (Char -> Int) -> Reader Char Int -> PropertyT IO ()
 (-->) f f' = do
   c <- forAll $ Gen.alpha
-  (f' toUpper) c === (f . toUpper) c
+
+  f c === runReader f' c
 
 infixr 0 -->
 
@@ -23,7 +25,7 @@ prop_morphism =
     let f = (n +) . ord
 
     -- exercise and verify
-    f --> fmap f
+    f --> mapReader f (reader id)
 
 prop_compose :: Property
 prop_compose =
@@ -36,17 +38,12 @@ prop_compose =
         g = (n +) . ord
 
     -- exercise and verify
-    f . g --> fmap f . fmap g
+    f . g --> (mapReader f . mapReader g) (reader id)
 
 prop_identity :: Property
 prop_identity =
   property $ do
-    -- set up
-    n <- forAll $ Gen.int (Range.constant 1 100)
-    let f = (n +)
-
-    -- exercise and verify
-    (fmap id) f @== id . f
+    id @== runReader $ mapReader id (reader id)
 
 tests :: TestTree
 tests =
