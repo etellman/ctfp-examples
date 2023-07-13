@@ -19,23 +19,16 @@ infixr 0 -->
 
 prop_morphism :: Property
 prop_morphism =
-  property $ do
-    -- set up
-    n <- forAll $ Gen.int (Range.constant 1 100)
-    let f = (n +) . ord
-
-    -- exercise and verify
-    f --> mapReader f (reader id)
+  property $ ord --> mapReader ord (reader id)
 
 prop_compose :: Property
 prop_compose =
   property $ do
     -- set up
-    m <- forAll $ Gen.int (Range.constant 2 100)
     n <- forAll $ Gen.int (Range.constant 2 100)
 
-    let f = (m +)
-        g = (n +) . ord
+    let f = (n +)
+        g = ord
 
     -- exercise and verify
     f . g --> (mapReader f . mapReader g) (reader id)
