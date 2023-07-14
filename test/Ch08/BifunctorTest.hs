@@ -1,4 +1,10 @@
-module Ch08.BifunctorTest (tests) where
+module Ch08.BifunctorTest
+  ( prop_identity,
+    prop_morphism,
+    prop_compose,
+    bifunctorTests,
+  )
+where
 
 import Data.Bifunctor
 import Hedgehog as H
@@ -7,20 +13,11 @@ import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
 
-(-->) ::
-  ((Int -> Int), (Int -> Int)) ->
-  ((Int, Int) -> (Int, Int)) ->
-  PropertyT IO ()
-(-->) (f, g) fg = do
-  x <- forAll $ Gen.int (Range.constant (-100) 100)
-  y <- forAll $ Gen.int (Range.constant (-100) 100)
-
-  fg (x, y) === (f x, g y)
-
-infixr 0 -->
-
-prop_morphism :: Property
-prop_morphism =
+prop_morphism ::
+  Bifunctor a =>
+  ((Int -> Int, Int -> Int) -> (a Int Int -> a Int Int) -> PropertyT IO ()) ->
+  Property
+prop_morphism (-->) =
   property $ do
     -- set up
     m <- forAll $ Gen.int (Range.constant (-100) 100)
@@ -32,8 +29,11 @@ prop_morphism =
     -- exercise and verify
     (f, g) --> bimap f g
 
-prop_compose :: Property
-prop_compose =
+prop_compose ::
+  Bifunctor a =>
+  ((Int -> Int, Int -> Int) -> (a Int Int -> a Int Int) -> PropertyT IO ()) ->
+  Property
+prop_compose (-->) =
   property $ do
     -- set up
     m <- forAll $ Gen.int (Range.constant (-100) 100)
@@ -45,13 +45,24 @@ prop_compose =
         j = (+ n)
 
     -- exercise and verify
-    (f . h, g . j) --> (bimap f g) . (bimap h j)
+    (f . h, g . j) --> ((bimap f g) . (bimap h j))
 
-tests :: TestTree
-tests =
+prop_identity ::
+  Bifunctor a =>
+  ((Int -> Int, Int -> Int) -> (a Int Int -> a Int Int) -> PropertyT IO ()) ->
+  Property
+prop_identity (-->) =
+  property $ (id, id) --> bimap id id
+
+bifunctorTests ::
+  Bifunctor a =>
+  String ->
+  ((Int -> Int, Int -> Int) -> (a Int Int -> a Int Int) -> PropertyT IO ()) ->
+  TestTree
+bifunctorTests name (-->) =
   testGroup
-    "Reader"
-    [ testProperty "identity" $ property $ (id, id) --> bimap id id,
-      testProperty "morphism" prop_morphism,
-      testProperty "compose" prop_compose
+    name
+    [ testProperty "identity" $ prop_identity (-->),
+      testProperty "morphism" $ prop_morphism (-->),
+      testProperty "compose" $ prop_compose (-->)
     ]
