@@ -1,6 +1,6 @@
-module Ch08.PreListTest (tests) where
+module Ch08.K2Test (tests) where
 
-import Ch08.PreList
+import Ch08.K2
 import Data.Bifunctor
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
@@ -10,14 +10,12 @@ import Test.Tasty.Hedgehog
 
 (-->) ::
   ((Int -> Int), (Int -> Int)) ->
-  ((PreList Int Int) -> (PreList Int Int)) ->
+  ((K2 Int Int Int) -> (K2 Int Int Int)) ->
   PropertyT IO ()
-(-->) (f, g) fg = do
+(-->) (_, _) fg = do
   x <- forAll $ Gen.int (Range.constant (-100) 100)
-  y <- forAll $ Gen.int (Range.constant (-100) 100)
 
-  fg (Cons x y) === Cons (f x) (g y)
-  fg Nil === Nil
+  fg (K2 x) === K2 x
 
 infixr 0 -->
 
@@ -52,7 +50,7 @@ prop_compose =
 tests :: TestTree
 tests =
   testGroup
-    "PreList"
+    "K2"
     [ testProperty "identity" $ property $ (id, id) --> bimap id id,
       testProperty "morphism" prop_morphism,
       testProperty "compose" prop_compose
