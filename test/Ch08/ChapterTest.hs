@@ -5,6 +5,7 @@ import Ch08.FstTest
 import Ch08.K2Test
 import Ch08.Maybe2Test
 import Ch08.PreListTest
+import Ch08.SndTest
 import Ch08.TupleTest
 import Ch08.WriterTest
 import Test.Tasty
@@ -19,5 +20,6 @@ chapterTests =
       Ch08.ContravariantTest.tests,
       Ch08.PreListTest.tests,
       Ch08.K2Test.tests,
-      Ch08.FstTest.tests
+      Ch08.FstTest.tests,
+      Ch08.SndTest.tests
     ]
