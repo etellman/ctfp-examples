@@ -1,6 +1,7 @@
 module Ch05.ProductTest (tests) where
 
 import TestLib.Assertions
+import TestLib.IntFunction
 import Ch05.Product
 import Data.Char
 import Hedgehog as H
@@ -13,10 +14,8 @@ prop_product :: Property
 prop_product =
   property $ do
     -- set up
-    n <- forAll $ Gen.int (Range.constant 2 100)
-
-    let f = (+ n)
-        g = chr . (+ 20) . (flip mod 40) . abs
+    f <- intFunction
+    let g = chr . (+ 20) . (flip mod 40) . abs
 
     -- exercise
     let p = factorize f g

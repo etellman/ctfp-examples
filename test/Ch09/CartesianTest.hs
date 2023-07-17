@@ -6,6 +6,7 @@ import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.IntFunction
 
 -- | 1^a :: Int -> ()
 prop_powersOfOne :: Property
@@ -37,8 +38,9 @@ prop_exponentialsOfSums =
     -- set up
     n <- forAll $ Gen.int (Range.constant 2 100)
     x <- forAll $ Gen.double (Range.constant 2 100)
+    intF <- intFunction
 
-    let f = show . negate
+    let f = show . intF
         g = show . log
         fg = toSum f g
 
@@ -54,8 +56,9 @@ prop_exponentialsOfSums2 =
     -- set up
     n <- forAll $ Gen.int (Range.constant 2 100)
     x <- forAll $ Gen.double (Range.constant 2 100)
+    intF <- intFunction
 
-    let f = show . negate
+    let f = show . intF
         g = show . log
         (f', g') = fromSum $ toSum f g
 

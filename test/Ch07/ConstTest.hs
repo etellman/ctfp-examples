@@ -6,6 +6,7 @@ import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.IntFunction
 
 prop_identity :: Property
 prop_identity =
@@ -21,11 +22,8 @@ prop_compose =
   property $ do
     -- set up
     x <- forAll $ Gen.int (Range.constant 2 100)
-    m <- forAll $ Gen.int (Range.constant 2 100)
-    n <- forAll $ Gen.int (Range.constant 2 100)
-
-    let f = (+ m)
-        g = (* n)
+    f <- intFunction
+    g <- intFunction
 
     -- exercise and verify
     fmap (f . g) (Const x) === (fmap f . fmap g) (Const x)

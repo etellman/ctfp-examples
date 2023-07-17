@@ -1,13 +1,13 @@
 module Ch08.ContravariantTest (tests) where
 
-import TestLib.Assertions
 import Data.Char
 import Data.Functor.Contravariant
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
-import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.Assertions
+import TestLib.IntFunction
 
 (-->) :: (Eq a, Show a) => (Char -> a) -> Op a Char -> PropertyT IO ()
 (-->) f f' = do
@@ -25,10 +25,8 @@ prop_compose :: Property
 prop_compose =
   property $ do
     -- set up
-    n <- forAll $ Gen.int (Range.constant 2 100)
-
-    let f = (n +)
-        g = ord
+    f <- intFunction
+    let g = ord
 
     -- exercise and verify
     f . g --> Op ((getOp $ contramap f (Op id)) . (getOp $ contramap g (Op id)))

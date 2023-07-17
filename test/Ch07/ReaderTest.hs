@@ -1,13 +1,13 @@
 module Ch07.ReaderTest (tests) where
 
-import TestLib.Assertions
 import Control.Monad.Reader
 import Data.Char
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
-import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.Assertions
+import TestLib.IntFunction
 
 (-->) :: (Char -> Int) -> Reader Char Int -> PropertyT IO ()
 (-->) f f' = do
@@ -25,10 +25,8 @@ prop_compose :: Property
 prop_compose =
   property $ do
     -- set up
-    n <- forAll $ Gen.int (Range.constant 2 100)
-
-    let f = (n +)
-        g = ord
+    f <- intFunction
+    let g = ord
 
     -- exercise and verify
     f . g --> (mapReader f . mapReader g) (reader id)

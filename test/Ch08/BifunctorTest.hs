@@ -8,10 +8,9 @@ where
 
 import Data.Bifunctor
 import Hedgehog as H
-import qualified Hedgehog.Gen as Gen
-import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.IntFunction
 
 prop_morphism ::
   Bifunctor a =>
@@ -20,11 +19,8 @@ prop_morphism ::
 prop_morphism (-->) =
   property $ do
     -- set up
-    m <- forAll $ Gen.int (Range.constant (-100) 100)
-    n <- forAll $ Gen.int (Range.constant (-100) 100)
-
-    let f = (+ m)
-        g = (* n)
+    f <- intFunction
+    g <- intFunction
 
     -- exercise and verify
     (f, g) --> bimap f g
@@ -36,13 +32,10 @@ prop_compose ::
 prop_compose (-->) =
   property $ do
     -- set up
-    m <- forAll $ Gen.int (Range.constant (-100) 100)
-    n <- forAll $ Gen.int (Range.constant (-100) 100)
-
-    let f = (+ m)
-        g = (* m)
-        h = (* n)
-        j = (+ n)
+    f <- intFunction
+    g <- intFunction
+    h <- intFunction
+    j <- intFunction
 
     -- exercise and verify
     (f . h, g . j) --> ((bimap f g) . (bimap h j))
