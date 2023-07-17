@@ -1,6 +1,6 @@
 module Ch08.ContravariantTest (tests) where
 
-import Assertions.Hedgehog
+import TestLib.Assertions
 import Data.Char
 import Data.Functor.Contravariant
 import Hedgehog as H

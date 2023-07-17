@@ -1,6 +1,6 @@
 module Ch04.WriterTest (tests) where
 
-import Assertions.Hedgehog
+import TestLib.Assertions
 import Ch04.Writer
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen

@@ -1,6 +1,6 @@
 module Ch05.ProductTest (tests) where
 
-import Assertions.Hedgehog
+import TestLib.Assertions
 import Ch05.Product
 import Data.Char
 import Hedgehog as H

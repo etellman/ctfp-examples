@@ -1,6 +1,6 @@
 module Ch04.OptionalTest (tests) where
 
-import Assertions.Hedgehog
+import TestLib.Assertions
 import Ch04.Optional
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen

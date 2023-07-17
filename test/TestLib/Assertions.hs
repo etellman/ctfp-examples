@@ -1,4 +1,4 @@
-module Assertions.Hedgehog
+module TestLib.Assertions
   ( (==>),
     (@==),
     eqCharF,

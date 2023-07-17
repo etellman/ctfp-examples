@@ -1,6 +1,6 @@
 module Ch09.EvalTest (tests) where
 
-import Assertions.Hedgehog
+import TestLib.Assertions
 import Ch09.Eval
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen

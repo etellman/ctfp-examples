@@ -1,6 +1,6 @@
 module Ch07.ReaderTest (tests) where
 
-import Assertions.Hedgehog
+import TestLib.Assertions
 import Control.Monad.Reader
 import Data.Char
 import Hedgehog as H
