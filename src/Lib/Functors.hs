@@ -1,7 +1,7 @@
 module Lib.Functors
   ( F (..),
     G (..),
-    alpha,
+    fToG,
   )
 where
 
@@ -15,5 +15,5 @@ data G a = G a deriving (Eq, Show)
 instance Functor G where
   fmap f (G a) = G (f a)
 
-alpha :: F a -> G a
-alpha (F x) = G x
+fToG :: F a -> G a
+fToG (F x) = G x

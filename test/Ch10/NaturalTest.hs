@@ -1,29 +1,21 @@
-module Ch10.NaturalTest (tests) where
+module Ch10.NaturalTest (prop_natural) where
 
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
-import Lib.Functors
 import Test.Tasty
 import Test.Tasty.Hedgehog
 import TestLib.IntFunction
 
-eq ::
-  (F Int -> G Int) ->
-  (F Int -> G Int) ->
-  PropertyT IO ()
-eq f g = do
-  x <- forAll $ Gen.int (Range.constant (-100) 100)
-  f (F x) === g (F x)
-
-prop_natural :: Property
-prop_natural =
+prop_natural ::
+  (Functor m, Functor n) =>
+  ((m Int) -> (n Int)) ->
+  ((m Int -> n Int) -> (m Int -> n Int) -> PropertyT IO ()) ->
+  Property
+prop_natural alpha eq =
   property $ do
     -- set up
     f <- intFunction
 
     -- exercise and verify
     (fmap f . alpha) `eq` (alpha . fmap f)
-
-tests :: TestTree
-tests = testProperty "natural transformation" prop_natural
