@@ -1,13 +1,12 @@
 module Ch10.FGNaturalTest (tests) where
 
-import Ch10.NaturalTest
+import Ch10.NaturalProperty
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
 import Lib.Functors
 import Test.Tasty
 import Test.Tasty.Hedgehog
-import TestLib.IntFunction
 
 fgEq ::
   (F Int -> G Int) ->
@@ -18,4 +17,4 @@ fgEq f g = do
   f (F x) === g (F x)
 
 tests :: TestTree
-tests = testProperty "natural transformation" $ prop_natural fToG fgEq
+tests = testProperty "F -> G natural transformation" $ prop_natural fToG fgEq

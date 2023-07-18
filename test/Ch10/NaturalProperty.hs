@@ -1,12 +1,9 @@
-module Ch10.NaturalTest (prop_natural) where
+module Ch10.NaturalProperty (prop_natural) where
 
 import Hedgehog as H
-import qualified Hedgehog.Gen as Gen
-import qualified Hedgehog.Range as Range
-import Test.Tasty
-import Test.Tasty.Hedgehog
 import TestLib.IntFunction
 
+-- | verifies a natural transformation between any two functors
 prop_natural ::
   (Functor m, Functor n) =>
   ((m Int) -> (n Int)) ->
