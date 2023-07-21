@@ -1,5 +1,10 @@
-module Ch10.NaturalProperty (prop_natural) where
+module Ch10.NaturalProperty
+  ( prop_natural,
+    prop_contraNatural,
+  )
+where
 
+import Data.Functor.Contravariant
 import Hedgehog as H
 import TestLib.IntFunction
 
@@ -16,3 +21,16 @@ prop_natural alpha eq =
 
     -- exercise and verify
     (fmap f . alpha) `eq` (alpha . fmap f)
+
+-- | verifies a natural transformation between contravariant functors
+prop_contraNatural ::
+  ((Op a Int) -> (Op b Int)) ->
+  (((Op a Int) -> (Op b Int)) -> ((Op a Int) -> (Op b Int)) -> PropertyT IO ()) ->
+  Property
+prop_contraNatural alpha eq =
+  property $ do
+    -- set up
+    f <- intFunction
+
+    -- exercise and verify
+    (contramap f . alpha) `eq` (alpha . contramap f)
