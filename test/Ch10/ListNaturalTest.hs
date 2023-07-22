@@ -8,12 +8,12 @@ import qualified Hedgehog.Range as Range
 import Test.Tasty
 import Test.Tasty.Hedgehog
 
-eq ::
+eqList ::
   (Eq (m Int), Show (m Int)) =>
   ([Int] -> m Int) ->
   ([Int] -> m Int) ->
   PropertyT IO ()
-eq f g = do
+eqList f g = do
   xs <- forAll $ Gen.list (Range.constant 0 20) (Gen.int $ Range.constant 0 100)
 
   H.cover 1 "empty" $ null xs
@@ -37,7 +37,7 @@ tests :: TestTree
 tests =
   testGroup
     "List Natural Transformations"
-    [ testProperty "safeHead" $ prop_natural safeHead eq,
-      testProperty "always nothing" $ prop_natural toNothing eq,
-      testProperty "length with Const" $ prop_natural length' eq
+    [ testProperty "safeHead" $ prop_natural safeHead eqList,
+      testProperty "always nothing" $ prop_natural toNothing eqList,
+      testProperty "length with Const" $ prop_natural length' eqList
     ]
