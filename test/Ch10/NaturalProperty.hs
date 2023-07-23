@@ -6,7 +6,7 @@ module Ch10.NaturalProperty
 where
 
 import Data.Functor.Contravariant
-import Hedgehog as H
+import Hedgehog
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
 import TestLib.IntFunction
