@@ -5,6 +5,7 @@ import Ch07.ChapterTest
 import Ch08.ChapterTest
 import Ch09.ChapterTest
 import Ch10.ChapterTest
+import Ch12.ChapterTest
 import Test.Tasty (defaultMain, testGroup)
 
 main :: IO ()
@@ -18,6 +19,7 @@ main = do
           Ch07.ChapterTest.chapterTests,
           Ch08.ChapterTest.chapterTests,
           Ch09.ChapterTest.chapterTests,
-          Ch10.ChapterTest.chapterTests
+          Ch10.ChapterTest.chapterTests,
+          Ch12.ChapterTest.chapterTests
         ]
     )

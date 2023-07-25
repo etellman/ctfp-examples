@@ -9,7 +9,7 @@ import Test.Tasty.Hedgehog
 import Test.Tasty.HUnit
 
 (-->) :: (Int -> Int) -> (Maybe2 Int -> Maybe2 Int) -> PropertyT IO ()
-(-->) f f' = do
+f --> f' = do
   x <- forAll $ Gen.int (Range.constant (-100) 100)
   f' nothing === nothing
   f' (just x) === just (f x)
