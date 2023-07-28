@@ -6,4 +6,4 @@ where
 data Delta a = Delta deriving (Eq, Show)
 
 instance Functor Delta where
-  fmap _ _ = Delta
+  fmap _ Delta = Delta
