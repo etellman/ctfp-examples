@@ -38,13 +38,10 @@ prop_identity =
 
     evaluate (id x) hs === evaluate x (contramap id $ hs)
 
--- vToG :: DeltaV a b -> G a
--- vToG (DeltaV x _) = G x
-
 tests :: TestTree
 tests =
   testGroup
-    "Product as Natural Transformation"
+    "HomSet Contrfunctor"
     [ testProperty "identity" prop_identity,
       testProperty "morphism" $ property (ord --> contramap ord)
     ]
