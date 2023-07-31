@@ -2,6 +2,7 @@ module TestLib.Assertions
   ( (==>),
     (@==),
     eqCharF,
+    eqFloat,
     eqIntsF,
     eqPairF,
   )
@@ -34,6 +35,13 @@ f `eqIntsF` g = do
   cover 70 "non-empty" $ (not . null) xs
 
   f xs === g xs
+
+-- | verifies that f(x) == g(x) for a reasonable number of xs
+eqFloat :: (Show a, Eq a) => (Float -> a) -> (Float -> a) -> PropertyT IO ()
+f `eqFloat` g = do
+  x <- forAll $ Gen.float $ Range.constant (-1000) 1000
+
+  f x === g x
 
 -- | verifies that f(x) == g(x) for a reasonable number of pairs
 eqPairF :: (Show a, Eq a) => ((Int, Int) -> a) -> ((Int, Int) -> a) -> PropertyT IO ()

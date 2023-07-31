@@ -1,5 +1,6 @@
 module Ch12.ChapterTest (chapterTests) where
 
+import Ch12.EqualizerTest
 import Ch12.HomSetTest
 import Ch12.ProductTest
 import Test.Tasty
@@ -9,5 +10,6 @@ chapterTests =
   testGroup
     "Chapter 12"
     [ Ch12.HomSetTest.tests,
-      Ch12.ProductTest.tests
+      Ch12.ProductTest.tests,
+      Ch12.EqualizerTest.tests
     ]

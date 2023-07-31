@@ -41,7 +41,7 @@ prop_identity =
 tests :: TestTree
 tests =
   testGroup
-    "HomSet Contrfunctor"
+    "HomSet Contrafunctor"
     [ testProperty "identity" prop_identity,
       testProperty "morphism" $ property (ord --> contramap ord)
     ]
