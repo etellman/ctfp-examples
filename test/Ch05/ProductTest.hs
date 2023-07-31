@@ -37,7 +37,7 @@ prop_coProduct =
 
     -- verify
     (cp . Left) @== f
-    (cp . Right) `eqCharF` g
+    (cp . Right) `eqChar` g
 
 tests :: TestTree
 tests =

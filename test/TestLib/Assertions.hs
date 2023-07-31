@@ -1,10 +1,10 @@
 module TestLib.Assertions
   ( (==>),
     (@==),
-    eqCharF,
+    eqChar,
     eqFloat,
-    eqIntsF,
-    eqPairF,
+    eqInts,
+    eqPair,
   )
 where
 
@@ -21,14 +21,14 @@ f @== g = do
 infixr 0 @==
 
 -- | verifies that f(x) == g(x) for a reasonable number of xs
-eqCharF :: (Show a, Eq a) => (Char -> a) -> (Char -> a) -> PropertyT IO ()
-f `eqCharF` g = do
+eqChar :: (Show a, Eq a) => (Char -> a) -> (Char -> a) -> PropertyT IO ()
+f `eqChar` g = do
   c <- forAll $ Gen.alpha
   f c === g c
 
 -- | verifies that f(x) == g(x) for a reasonable number of xs
-eqIntsF :: (Show a, Eq a) => ([Int] -> a) -> ([Int] -> a) -> PropertyT IO ()
-f `eqIntsF` g = do
+eqInts :: (Show a, Eq a) => ([Int] -> a) -> ([Int] -> a) -> PropertyT IO ()
+f `eqInts` g = do
   xs <- forAll $ Gen.list (Range.constant 0 10) (Gen.int $ Range.constant 0 100)
 
   cover 2 "empty" $ null xs
@@ -44,8 +44,8 @@ f `eqFloat` g = do
   f x === g x
 
 -- | verifies that f(x) == g(x) for a reasonable number of pairs
-eqPairF :: (Show a, Eq a) => ((Int, Int) -> a) -> ((Int, Int) -> a) -> PropertyT IO ()
-f `eqPairF` g = do
+eqPair :: (Show a, Eq a) => ((Int, Int) -> a) -> ((Int, Int) -> a) -> PropertyT IO ()
+f `eqPair` g = do
   x <- forAll $ Gen.int (Range.constant (-100) 100)
   y <- forAll $ Gen.int (Range.constant (-100) 100)
 
