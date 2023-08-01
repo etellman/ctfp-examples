@@ -34,6 +34,7 @@ ghc-options:
 - -Wpartial-fields
 - -Wredundant-constraints
 - -XOverloadedStrings
+- -XInstanceSigs
 
 library:
   source-dirs: src
