@@ -48,7 +48,7 @@ prop_either_right =
 tests :: TestTree
 tests =
   testGroup
-    "Contravariant Functor"
+    "Continuity"
     [ testProperty "identity" prop_identity,
       testProperty "morphism" prop_morphism,
       testProperty "either left" prop_either_left,
