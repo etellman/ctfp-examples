@@ -3,6 +3,9 @@ module Ch13.Homomorphism
     listToP,
     S (..),
     listToS,
+    p,
+    q,
+    h,
   )
 where
 
@@ -27,3 +30,12 @@ instance Monoid S where
 
 listToS :: [Int] -> S
 listToS = S . foldr (+) 0
+
+p :: Int -> ([Int] -> [Int])
+p x = (++ [x])
+
+q :: Int -> (Int -> Int)
+q x = (+ x)
+
+h :: ([Int] -> [Int]) -> (Int -> Int)
+h f = \x -> (sum . f) [x]
