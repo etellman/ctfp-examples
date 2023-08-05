@@ -2,6 +2,7 @@ module TestLib.Assertions
   ( (==>),
     (@==),
     eqChar,
+    eqNat,
     eqFloat,
     eqInts,
     eqPair,
@@ -25,6 +26,12 @@ eqChar :: (Show a, Eq a) => (Char -> a) -> (Char -> a) -> PropertyT IO ()
 f `eqChar` g = do
   c <- forAll $ Gen.alpha
   f c === g c
+
+-- | verifies that f(x) == g(x) for natural numbers
+eqNat :: (Show a, Eq a) => (Int -> a) -> (Int -> a) -> PropertyT IO ()
+f `eqNat` g = do
+  x <- forAll $ Gen.int (Range.constant 1 100)
+  f x === g x
 
 -- | verifies that f(x) == g(x) for a reasonable number of xs
 eqInts :: (Show a, Eq a) => ([Int] -> a) -> ([Int] -> a) -> PropertyT IO ()
