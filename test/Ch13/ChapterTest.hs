@@ -6,6 +6,6 @@ import Test.Tasty
 chapterTests :: TestTree
 chapterTests =
   testGroup
-    "Chapter 13"
+    "Ch13.ChapterTest"
     [ Ch13.HomomorphismTest.tests
     ]

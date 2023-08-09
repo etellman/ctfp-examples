@@ -54,7 +54,7 @@ eqF toM f g = do
 tests :: TestTree
 tests =
   testGroup
-    "Representable Functors"
+    "Ch14.RepresentableTest"
     [ testProperty "list alpha" prop_listAlpha,
       testGroup
         "Memoized Function"

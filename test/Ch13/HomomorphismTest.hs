@@ -30,7 +30,7 @@ prop_free_monoid =
 tests :: TestTree
 tests =
   testGroup
-    "Homomorphism"
+    "Ch13.HomomorphismTest"
     [ testGroup
         "list to product"
         [ testProperty "non-empty list" prop_list_to_P,
