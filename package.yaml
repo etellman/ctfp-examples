@@ -36,6 +36,7 @@ ghc-options:
 - -XOverloadedStrings
 - -XInstanceSigs
 - -XTypeFamilies
+- -XRankNTypes
 
 library:
   source-dirs: src

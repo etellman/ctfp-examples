@@ -3,6 +3,7 @@ module Ch15.YonedaTest (tests) where
 import Ch10.NaturalProperty
 import Ch15.Yoneda
 import Control.Monad.Reader
+import Data.Char
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
@@ -36,11 +37,21 @@ prop_yoneda_natural newM =
     f <- intFunction
     c <- forAll $ Gen.alpha
 
-    let alpha = fromReader newM c
+    let alpha = toAlpha newM c
         eqMorphisms = eq constReader
 
     -- exercise and verify
     (fmap f . alpha) `eqMorphisms` (alpha . fmap f)
+
+eqReaderToF ::
+  ((Reader Char Char -> F Char) -> (Reader Char Char -> F Char)) ->
+  ((Reader Char Char -> F Char) -> (Reader Char Char -> F Char)) ->
+  PropertyT IO ()
+f `eqReaderToF` g = do
+  x <- forAll $ Gen.alpha
+  let toF r = F (runReader r x)
+
+  (f toF) (reader toUpper) === (g toF) (reader toUpper)
 
 fromSingletonList :: [a] -> a
 fromSingletonList [x] = x
@@ -56,13 +67,18 @@ tests =
     [ testGroup
         "F"
         [ testProperty "to Reader" $ do
-            prop_natural (toReader (\(F x) -> x)) (eqAlpha F),
+            prop_natural (toBeta (\(F x) -> x)) (eqAlpha F),
           testProperty "from Reader" $ prop_yoneda_natural F
         ],
       testGroup
         "list"
         [ testProperty "to Reader" $ do
-            prop_natural (toReader fromSingletonList) (eqAlpha toList),
+            prop_natural (toBeta fromSingletonList) (eqAlpha toList),
           testProperty "from Reader" $ prop_yoneda_natural toList
+        ],
+      testGroup
+        "phi and psi identity"
+        [ testProperty "phi . psi" $ property $ (eq F) (phi . psi) id,
+          testProperty "psi . phi" $ property $ (psi . phi) `eqReaderToF` id
         ]
     ]
