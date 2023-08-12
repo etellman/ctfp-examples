@@ -27,12 +27,11 @@ eqAlpha newM f g = do
 
   runReader (f (newM x)) c === runReader (g (newM x)) c
 
--- | verifies a natural Yoneda transformation
-prop_yoneda_natural ::
+prop_yonedaNatural ::
   (Eq (m Int), Show (m Int), Functor m) =>
   (Int -> m Int) ->
   Property
-prop_yoneda_natural newM =
+prop_yonedaNatural newM =
   property $ do
     f <- intFunction
     c <- forAll $ Gen.alpha
@@ -53,12 +52,32 @@ f `eqReaderToF` g = do
 
   (f toF) (reader toUpper) === (g toF) (reader toUpper)
 
-fromSingletonList :: [a] -> a
-fromSingletonList [x] = x
-fromSingletonList _ = undefined
+prop_listLength :: Property
+prop_listLength =
+  property $ do
+    x <- forAll $ Gen.int (Range.constant (-100) 100)
+    xs <-
+      forAll $
+        Gen.list
+          (Range.constant 0 20)
+          (Gen.int $ Range.constant (-100) 100)
 
-toList :: a -> [a]
-toList x = [x]
+    let f = listLength xs
+
+    -- exercise and verify
+    runReader f x === length xs
+
+prop_listIndex :: Property
+prop_listIndex =
+  property $ do
+    n <- forAll $ Gen.int (Range.constant 1 100)
+    i <- forAll $ Gen.int (Range.constant 0 (n - 1))
+    xs <- forAll $ Gen.list (Range.constant n n) (Gen.int $ Range.constant (-100) 100)
+
+    let f = listIndex xs
+
+    -- exercise and verify
+    runReader f i === xs !! i
 
 tests :: TestTree
 tests =
@@ -68,13 +87,15 @@ tests =
         "F"
         [ testProperty "to Reader" $ do
             prop_natural (toBeta (\(F x) -> x)) (eqAlpha F),
-          testProperty "from Reader" $ prop_yoneda_natural F
+          testProperty "from Reader" $ prop_yonedaNatural F
         ],
       testGroup
         "list"
-        [ testProperty "to Reader" $ do
-            prop_natural (toBeta fromSingletonList) (eqAlpha toList),
-          testProperty "from Reader" $ prop_yoneda_natural toList
+        [ testProperty "from singleton" $ do
+            prop_natural (toBeta fromSingletonList) (eqAlpha toSingletonList),
+          testProperty "to singleton" $ prop_yonedaNatural toSingletonList,
+          testProperty "length" $ prop_listLength,
+          testProperty "index" $ prop_listIndex
         ],
       testGroup
         "phi and psi identity"
