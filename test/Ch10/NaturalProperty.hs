@@ -24,7 +24,7 @@ eq toM f g = do
 -- | verifies a natural transformation between any two functors
 prop_natural ::
   (Functor m, Functor n) =>
-  ((m Int) -> (n Int)) ->
+  (m Int -> n Int) ->
   ((m Int -> n Int) -> (m Int -> n Int) -> PropertyT IO ()) ->
   Property
 prop_natural alpha eqMorphisms =

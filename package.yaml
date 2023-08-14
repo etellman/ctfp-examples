@@ -22,6 +22,8 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - mtl
+- adjunctions >= 4.4.2
+- distributive >= 0.6.2.1
 
 ghc-options:
 - -Wall
@@ -37,6 +39,7 @@ ghc-options:
 - -XInstanceSigs
 - -XTypeFamilies
 - -XRankNTypes
+- -XMultiParamTypeClasses
 
 library:
   source-dirs: src
