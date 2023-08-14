@@ -14,11 +14,9 @@ eqList ::
   ([Int] -> m Int) ->
   PropertyT IO ()
 eqList f g = do
-  xs <- forAll $ Gen.list (Range.constant 0 20) (Gen.int $ Range.constant 0 100)
+  xs <- forAll $ Gen.list (Range.constant 1 20) (Gen.int $ Range.constant (-100) 100)
 
-  H.cover 1 "empty" $ null xs
-  H.cover 80 "non-empty" $ (not . null) xs
-
+  f [] === g []
   f xs === g xs
 
 safeHead :: [a] -> Maybe a
