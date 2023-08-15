@@ -1,4 +1,4 @@
-module Ch14.StreamTest (tests) where
+module Lib.StreamTest (tests) where
 
 import Ch10.NaturalProperty
 import Data.Distributive as Dist

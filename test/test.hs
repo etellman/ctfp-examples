@@ -10,6 +10,7 @@ import Ch13.ChapterTest
 import Ch14.ChapterTest
 import Ch15.ChapterTest
 import Ch18.ChapterTest
+import Lib.LibTest
 import Test.Tasty (defaultMain, testGroup)
 
 main :: IO ()
@@ -17,7 +18,8 @@ main = do
   defaultMain
     ( testGroup
         "Category Theory for Programmers"
-        [ Ch03.ChapterTest.chapterTests,
+        [ Lib.LibTest.libTests,
+          Ch03.ChapterTest.chapterTests,
           Ch04.ChapterTest.chapterTests,
           Ch05.ChapterTest.chapterTests,
           Ch07.ChapterTest.chapterTests,
