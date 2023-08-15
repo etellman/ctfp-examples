@@ -4,6 +4,7 @@ import Ch10.NaturalProperty
 import Lib.Functors
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.Assertions
 
 data F' a = F' a deriving (Eq, Show)
 

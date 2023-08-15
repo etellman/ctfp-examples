@@ -9,6 +9,7 @@ import qualified Hedgehog.Range as Range
 import Lib.Stream
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.Assertions
 import TestLib.IntFunction
 
 -- | verifies that f(x) == g(x) for natural numbers

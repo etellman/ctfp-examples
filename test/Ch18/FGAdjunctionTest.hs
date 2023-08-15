@@ -1,11 +1,11 @@
 module Ch18.FGAdjunctionTest (tests) where
 
-import Ch10.NaturalProperty
 import Data.Functor.Adjunction
 import Hedgehog as H
 import Lib.Functors
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.Assertions
 
 eqToFG ::
   (Int -> (F (G Int))) ->

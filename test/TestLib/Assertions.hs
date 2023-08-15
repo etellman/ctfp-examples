@@ -5,12 +5,25 @@ module TestLib.Assertions
     eqFloat,
     eqInts,
     eqPair,
+    eq,
   )
 where
 
 import Hedgehog
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
+
+-- | compare two functions with arbitrary domains, as long as there is a way to convert an integer
+-- to a value in the domain
+eq ::
+  (Eq b, Show b) =>
+  (Int -> a) ->
+  (a -> b) ->
+  (a -> b) ->
+  PropertyT IO ()
+eq toDomain f g = do
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  (f . toDomain) x === (g . toDomain) x
 
 -- | verifies that f(x) == g(x) for a reasonable number of xs
 (@==) :: (Show a, Eq a) => (Int -> a) -> (Int -> a) -> PropertyT IO ()

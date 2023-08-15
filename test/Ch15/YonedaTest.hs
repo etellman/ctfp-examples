@@ -10,6 +10,7 @@ import qualified Hedgehog.Range as Range
 import Lib.Functors
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.Assertions
 import TestLib.IntFunction
 
 constReader :: Int -> Reader a Int

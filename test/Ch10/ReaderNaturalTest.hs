@@ -5,6 +5,7 @@ import Control.Monad.Reader
 import Lib.Functors
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.Assertions
 
 constReader :: Int -> Reader () Int
 constReader n = reader $ const n
@@ -21,7 +22,7 @@ toF f = F $ runReader f ()
 tests :: TestTree
 tests =
   testGroup
-    "Reader Natural Transformations"
+    "Ch10.ReaderNaturalTest"
     [ testProperty "to nothing" $ prop_natural toNothing (eq constReader),
       testProperty "to constant" $ prop_natural toJust (eq constReader),
       testProperty "to F" $ prop_natural toF (eq constReader)

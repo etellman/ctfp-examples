@@ -5,6 +5,7 @@ import Hedgehog
 import Lib.Functors
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.Assertions
 
 tests :: TestTree
 tests =
