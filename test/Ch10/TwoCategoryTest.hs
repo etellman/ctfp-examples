@@ -1,7 +1,9 @@
 module Ch10.TwoCategoryTest (tests) where
 
 import Ch10.NaturalProperty
-import Lib.Functors
+import Lib.F
+import Lib.G
+import Lib.NaturalTransformations
 import Test.Tasty
 import Test.Tasty.Hedgehog
 import TestLib.Assertions

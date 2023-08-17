@@ -1,10 +1,12 @@
 module Ch18.FGAdjunctionTest (tests) where
 
+import Ch18.FGAdjunction ()
 import Data.Functor.Adjunction
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
-import Lib.Functors
+import Lib.F
+import Lib.G
 import Test.Tasty
 import Test.Tasty.Hedgehog
 import TestLib.Assertions
@@ -35,7 +37,6 @@ prop_counit = property $ do
   -- exercise and verify
   (F . counit . G) `eqF` id
   counit (G . F $ x) === x
-
 
 prop_leftAdjunct :: Property
 prop_leftAdjunct = property $ do

@@ -6,7 +6,6 @@ where
 
 import Data.Functor.Contravariant
 import Hedgehog
-import TestLib.Assertions
 import TestLib.IntFunction
 
 -- | verifies a natural transformation between any two functors

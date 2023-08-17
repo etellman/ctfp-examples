@@ -2,7 +2,7 @@ module Ch10.ReaderNaturalTest (tests) where
 
 import Ch10.NaturalProperty
 import Control.Monad.Reader
-import Lib.Functors
+import Lib.F
 import Test.Tasty
 import Test.Tasty.Hedgehog
 import TestLib.Assertions

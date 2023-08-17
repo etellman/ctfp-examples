@@ -2,7 +2,10 @@ module Ch10.FGNaturalTest (tests) where
 
 import Ch10.NaturalProperty
 import Hedgehog
-import Lib.Functors
+import Lib.F
+import Lib.G
+import Lib.H
+import Lib.NaturalTransformations
 import Test.Tasty
 import Test.Tasty.Hedgehog
 import TestLib.Assertions
@@ -10,7 +13,7 @@ import TestLib.Assertions
 tests :: TestTree
 tests =
   testGroup
-    "F/G/H Natural Transformations"
+    "Ch10.FGNaturalTest"
     [ testProperty "F Identity" $ prop_natural id (eq F),
       testProperty "G Identity" $ prop_natural id (eq G),
       testProperty "H Identity" $ prop_natural id (eq H),

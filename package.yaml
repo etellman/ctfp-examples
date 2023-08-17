@@ -40,6 +40,8 @@ ghc-options:
 - -XTypeFamilies
 - -XRankNTypes
 - -XMultiParamTypeClasses
+- -fno-warn-orphans
+
 
 library:
   source-dirs: src
