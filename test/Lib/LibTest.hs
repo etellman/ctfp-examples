@@ -1,11 +1,13 @@
 module Lib.LibTest (libTests) where
 
-import Test.Tasty
+import Lib.FTest
 import Lib.StreamTest
+import Test.Tasty
 
 libTests :: TestTree
 libTests =
   testGroup
     "Lib.LibTest"
-    [ Lib.StreamTest.tests
+    [ Lib.FTest.tests,
+      Lib.StreamTest.tests
     ]

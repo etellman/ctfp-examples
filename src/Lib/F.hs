@@ -1,19 +1,15 @@
 module Lib.F
   ( F (..),
-    fromF,
   )
 where
 
 import Data.Distributive
 import Data.Functor.Rep
 
-data F a = F a deriving (Eq, Show)
+data F a = F {fromF :: a} deriving (Eq, Show)
 
 instance Functor F where
   fmap f (F a) = F (f a)
-
-fromF :: F a -> a
-fromF (F x) = x
 
 instance Distributive F where
   distribute :: Functor m => m (F a) -> F (m a)
