@@ -9,6 +9,14 @@ import qualified Hedgehog.Range as Range
 import Lib.F
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.Assertions
+import TestLib.IntFunction
+
+-- eqF ::
+--   (F Int -> F Int) ->
+--   (F Int -> F Int) ->
+--   PropertyT IO ()
+-- eqF = eq F
 
 prop_distribute :: Property
 prop_distribute =
@@ -49,6 +57,30 @@ prop_index = property $ do
   -- verify
   h () === x
 
+prop_lift :: Property
+prop_lift = property $ do
+  -- set up
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  f <- intFunction
+
+  -- exercise
+  let fx = (F f) <*> (F x)
+
+  -- verify
+  fx === (F $ f x)
+
+prop_fish :: Property
+prop_fish = property $ do
+  -- set up
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  f <- intFunction
+
+  -- exercise
+  let actual = F x >>= fmap pure f
+
+  -- verify
+  actual === (F $ f x)
+
 tests :: TestTree
 tests =
   testGroup
@@ -62,5 +94,14 @@ tests =
         "Representable"
         [ testProperty "tabulate" prop_tabulate,
           testProperty "index" prop_index
+        ],
+      testGroup
+        "Applicative"
+        [ testProperty "pure" $ property $ pure @== F,
+          testProperty "lift" prop_lift
+        ],
+      testGroup
+        "Monad"
+        [ testProperty "fish" prop_fish
         ]
     ]
