@@ -69,14 +69,26 @@ prop_lift = property $ do
   -- verify
   fx === (F $ f x)
 
-prop_fish :: Property
-prop_fish = property $ do
+prop_bind :: Property
+prop_bind = property $ do
   -- set up
   x <- forAll $ Gen.int (Range.constant (-100) 100)
   f <- intFunction
 
   -- exercise
   let actual = F x >>= fmap pure f
+
+  -- verify
+  actual === (F $ f x)
+
+prop_bind_alternate :: Property
+prop_bind_alternate = property $ do
+  -- set up
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  f <- intFunction
+
+  -- exercise
+  let actual = (F x) `bind` (fmap pure f)
 
   -- verify
   actual === (F $ f x)
@@ -102,6 +114,7 @@ tests =
         ],
       testGroup
         "Monad"
-        [ testProperty "fish" prop_fish
+        [ testProperty "bind" prop_bind,
+          testProperty "bind alternate" prop_bind_alternate
         ]
     ]

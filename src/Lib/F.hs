@@ -1,5 +1,6 @@
 module Lib.F
   ( F (..),
+    bind,
   )
 where
 
@@ -37,3 +38,10 @@ instance Applicative F where
 instance Monad F where
   (>>=) :: F a -> (a -> F b) -> F b
   F x >>= f = f x
+
+join :: F (F a) -> F a
+join (F (F x)) = F x
+
+-- alternative definition
+bind :: F a -> (a -> F b) -> F b
+bind x f = join $ fmap f x
