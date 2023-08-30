@@ -24,6 +24,8 @@ dependencies:
 - mtl
 - adjunctions >= 4.4.2
 - distributive >= 0.6.2.1
+- containers
+- safe-money >= 0.7
 
 ghc-options:
 - -Wall
