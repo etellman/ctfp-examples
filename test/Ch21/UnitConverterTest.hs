@@ -2,52 +2,50 @@ module Ch21.UnitConverterTest (tests) where
 
 import Ch21.UnitConverter
 import Control.Monad.Reader
-import Data.Map
+import Data.Ratio
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
+import Money
 import Test.Tasty
 import Test.Tasty.Hedgehog
 
-prop_computePrice :: (String -> Double -> Reader Rates Double) -> Property
+genRational :: (Range Integer) -> (Range Integer) -> Gen Rational
+genRational rn rd =
+  let n = Gen.integral rn
+      d = Gen.integral rd
+   in (%) <$> n <*> d
+
+genRational' :: Gen Rational
+genRational' = genRational (Range.constant 1 100) (Range.constant 1 100)
+
+prop_computePrice ::
+  ( forall src dst.
+    Dense src ->
+    Integer ->
+    Reader (ExchangeRate src dst) (Dense dst)
+  ) ->
+  Property
 prop_computePrice calculator = property $ do
   -- set up
-  toCurrency <- forAll $ Gen.double (Range.constant 0.1 2.0)
-  euroPrice <- forAll $ Gen.double (Range.constant 1.0 100.0)
-  currency <- forAll $ Gen.string (Range.constant 0 100) Gen.alpha
-  let rates = singleton currency toCurrency
+  rate <- forAll $ genRational'
+  yenAmount <- forAll $ genRational'
+  n <- forAll $ Gen.integral (Range.constant 0 100)
+
+  let jpyToBtc = exchangeRate' rate :: ExchangeRate "JPY" "BTC"
+      yen = dense' yenAmount
 
   -- exercise
-  let currencyPrice = runReader (calculator currency euroPrice) rates
+  let btc = runReader (calculator yen n) jpyToBtc
 
   -- verify
-  currencyPrice === euroPrice * toCurrency
-
-prop_roundTrip :: Property
-prop_roundTrip = property $ do
-  -- set up
-  toCurrency <- forAll $ Gen.double (Range.constant 0.1 2.0)
-  euroPrice <- forAll $ Gen.double (Range.constant 1.0 100.0)
-  currency <- forAll $ Gen.string (Range.constant 0 100) Gen.alpha
-
-  let rates = singleton currency toCurrency
-      r1 = computePrice currency euroPrice :: Reader Rates Double
-      r2 = reverseConvert currency :: Double -> Reader Rates Double
-      r3 = r1 >>= r2 :: Reader Rates Double
-
-  -- -- exercise
-  let roundTrip = runReader r3 rates :: Double
-
-  -- verify
-  roundTrip === euroPrice
-
+  btc === (dense' $ yenAmount * rate * fromIntegral n)
 
 
 tests :: TestTree
 tests =
   testGroup
     "Ch21.UnitConverterTest"
-    [ testProperty "price v1" $ prop_computePrice computePrice,
-      testProperty "price v2" $ prop_computePrice computePrice',
-      testProperty "round trip" $ prop_roundTrip
+    [ testProperty "price v3" $ prop_computePrice computePrice,
+      testProperty "price v4" $ prop_computePrice computePrice'
     ]

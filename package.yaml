@@ -42,6 +42,7 @@ ghc-options:
 - -XTypeFamilies
 - -XRankNTypes
 - -XMultiParamTypeClasses
+- -XDataKinds
 - -fno-warn-orphans
 
 
