@@ -11,9 +11,9 @@ import TestLib.IntFunction
 
 (-->) :: (Int -> Int) -> (Reader2 Int Int -> Reader2 Int Int) -> PropertyT IO ()
 (-->) f f' = do
-  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  e <- forAll $ Gen.int (Range.constant (-100) 100)
 
-  f x === runReader2 (f' (reader2 id)) x
+  f e === runReader2 (f' (reader2 id)) e
 
 infixr 0 -->
 
@@ -35,19 +35,45 @@ prop_compose =
     -- exercise and verify
     f . g --> fmap f . fmap g
 
-prop_applicative :: Property
-prop_applicative =
+prop_liftA2 :: Property
+prop_liftA2 =
   property $ do
     -- set up
     f <- intFunction
     g <- intFunction
-    x <- forAll $ Gen.int (Range.constant (-100) 100)
+    e <- forAll $ Gen.int (Range.constant (-100) 100)
 
     -- exercise
-    let h = liftA2 (+) (reader2 f) (reader2 g) :: Reader2 Int Int
+    let h = liftA2 (+) (reader2 f) (reader2 g)
+        h' = (+) <$> (reader2 f) <*> (reader2 g)
 
     -- exercise and verify
-    runReader2 h x === (f x) + (g x)
+    runReader2 h e === (f e) + (g e)
+    runReader2 h' e === (f e) + (g e)
+
+prop_bind :: Property
+prop_bind =
+  property $ do
+    -- set up
+    f <- intFunction
+    e <- forAll $ Gen.int (Range.constant (-100) 100)
+    let g y = reader2 (\e' -> y + e')
+
+    -- exercise
+    let h = reader2 f >>= g
+
+    -- exercise and verify
+    runReader2 h e === f e + e
+
+prop_pure :: (Int -> Reader2 Int Int) -> Property
+prop_pure f =
+  property $ do
+    -- set up
+    x <- forAll $ Gen.int (Range.constant (-100) 100)
+    e <- forAll $ Gen.int (Range.constant (-100) 100)
+
+    -- exercise and verify
+    runReader2 (f x) e === x
 
 tests :: TestTree
 tests =
@@ -59,5 +85,14 @@ tests =
           testProperty "morphism" prop_morphism,
           testProperty "compose" prop_compose
         ],
-      testProperty "Applicative" prop_applicative
+      testGroup
+        "Applicative"
+        [ testProperty "pure" $ prop_pure pure,
+          testProperty "liftA2" prop_liftA2
+        ],
+      testGroup
+        "Monad"
+        [ testProperty "return" $ prop_pure return,
+          testProperty "bind" prop_bind
+        ]
     ]

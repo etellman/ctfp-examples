@@ -19,7 +19,7 @@ instance Functor (Reader2 e) where
   fmap f (Reader2 g) = Reader2 (f . g)
 
 instance Applicative (Reader2 e) where
-  pure x = Reader2 (const x)
+  pure e = Reader2 (const e)
   liftA2 ::
     (f -> g -> h) ->
     Reader2 e f ->
