@@ -1,12 +1,16 @@
-module Ch21.Reader2
-  ( Reader2 (..),
+module Lib.Reader2
+  ( Reader2,
     runReader2,
+    reader2,
   )
 where
 
 import Control.Applicative
 
 newtype Reader2 e a = Reader2 (e -> a)
+
+reader2 :: (e -> a) -> Reader2 e a
+reader2 f = Reader2 f
 
 runReader2 :: Reader2 e a -> e -> a
 runReader2 (Reader2 f) e = f e
