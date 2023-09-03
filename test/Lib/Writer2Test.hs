@@ -78,6 +78,19 @@ prop_bind =
     -- exercise and verify
     actual === (2 * x, wx ++ wy)
 
+prop_join :: Property
+prop_join =
+  property $ do
+    -- set up
+    x <- forAll $ Gen.int (Range.constant (-100) 100)
+    wx <- forAll $ Gen.string (Range.constant 1 100) Gen.alpha
+    wwx <- forAll $ Gen.string (Range.constant 1 100) Gen.alpha
+
+    let xx = writer2 (writer2 (x, wx), wwx)
+
+    -- exercise and verify
+    join xx === writer2 (x, wwx ++ wx)
+
 intToWriter :: (Int -> Int) -> w -> (Int -> Writer2 w Int)
 intToWriter f w = \x -> writer2 (f x, w)
 
@@ -116,7 +129,8 @@ tests =
       testGroup
         "Monad"
         [ testProperty "return" $ prop_pure return,
-          testProperty "bind" prop_bind
+          testProperty "bind" prop_bind,
+          testProperty "join" prop_join
         ],
       testProperty ">=>" prop_fish
     ]
