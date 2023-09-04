@@ -7,6 +7,7 @@ import qualified Hedgehog.Range as Range
 import Lib.Reader2
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.Assertions
 import TestLib.IntFunction
 
 (-->) :: (Int -> Int) -> (Reader2 Int Int -> Reader2 Int Int) -> PropertyT IO ()
@@ -75,6 +76,16 @@ prop_pure f =
     -- exercise and verify
     runReader2 (f x) e === x
 
+prop_join :: Property
+prop_join =
+  property $ do
+    -- set up
+    f <- intFunction
+    let rr = reader2 (\_ -> reader2 f)
+
+    -- exercise and verify
+    runReader2 (join rr) @== f
+
 tests :: TestTree
 tests =
   testGroup
@@ -93,6 +104,7 @@ tests =
       testGroup
         "Monad"
         [ testProperty "return" $ prop_pure return,
-          testProperty "bind" prop_bind
+          testProperty "bind" prop_bind,
+          testProperty "join" prop_join
         ]
     ]

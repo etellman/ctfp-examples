@@ -2,6 +2,7 @@ module Lib.Reader2
   ( Reader2,
     runReader2,
     reader2,
+    join,
   )
 where
 
@@ -37,3 +38,6 @@ instance Monad (Reader2 e) where
               readerB = aToReaderB a
            in runReader2 readerB e
      in Reader2 f
+
+join :: Reader2 e (Reader2 e a) -> Reader2 e a
+join rr = rr >>= id
