@@ -1,5 +1,6 @@
 module Lib.Reader2Test (tests) where
 
+import Lib.FunctorProperties
 import Control.Applicative
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
@@ -18,24 +19,6 @@ import TestLib.IntFunction
 
 infixr 0 -->
 
-prop_morphism :: Property
-prop_morphism = property $ do
-  -- set up
-  f <- intFunction
-
-  -- exercise and verify
-  f --> fmap f
-
-prop_compose :: Property
-prop_compose =
-  property $ do
-    -- set up
-    f <- intFunction
-    g <- intFunction
-
-    -- exercise and verify
-    f . g --> fmap f . fmap g
-
 prop_liftA2 :: Property
 prop_liftA2 =
   property $ do
@@ -46,11 +29,9 @@ prop_liftA2 =
 
     -- exercise
     let h = liftA2 (+) (reader2 f) (reader2 g)
-        h' = (+) <$> (reader2 f) <*> (reader2 g)
 
-    -- exercise and verify
+    -- verify
     runReader2 h e === (f e) + (g e)
-    runReader2 h' e === (f e) + (g e)
 
 prop_bind :: Property
 prop_bind =
@@ -90,12 +71,7 @@ tests :: TestTree
 tests =
   testGroup
     "Lib.Reader2Test"
-    [ testGroup
-        "Functor"
-        [ testProperty "identity" $ property $ id --> fmap id,
-          testProperty "morphism" prop_morphism,
-          testProperty "compose" prop_compose
-        ],
+    [ functorTests (-->),
       testGroup
         "Applicative"
         [ testProperty "pure" $ prop_pure pure,

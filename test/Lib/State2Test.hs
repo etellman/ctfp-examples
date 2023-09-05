@@ -5,6 +5,7 @@ import Data.Bifunctor
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
+import Lib.FunctorProperties
 import Lib.State2
 import Test.Tasty
 import Test.Tasty.Hedgehog
@@ -21,24 +22,6 @@ import TestLib.IntFunction
   f x === x'
 
 infixr 0 -->
-
-prop_morphism :: Property
-prop_morphism = property $ do
-  -- set up
-  f <- intFunction
-
-  -- exercise and verify
-  f --> fmap f
-
-prop_compose :: Property
-prop_compose =
-  property $ do
-    -- set up
-    f <- intFunction
-    g <- intFunction
-
-    -- exercise and verify
-    f . g --> fmap f . fmap g
 
 prop_liftA2 :: Property
 prop_liftA2 =
@@ -112,12 +95,7 @@ tests :: TestTree
 tests =
   testGroup
     "Lib.State2Test"
-    [ testGroup
-        "Functor"
-        [ testProperty "identity" $ property $ id --> fmap id,
-          testProperty "morphism" prop_morphism,
-          testProperty "compose" prop_compose
-        ],
+    [ functorTests (-->),
       testGroup
         "Applicative"
         [ testProperty "pure" $ prop_pure pure,

@@ -5,6 +5,7 @@ import Control.Monad
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
+import Lib.FunctorProperties
 import Lib.Writer2
 import Test.Tasty
 import Test.Tasty.Hedgehog
@@ -18,25 +19,6 @@ import TestLib.IntFunction
   writer2 (f x, s) === f' (writer2 (x, s))
 
 infixr 0 -->
-
-prop_morphism :: Property
-prop_morphism =
-  property $ do
-    -- set up
-    f <- intFunction
-
-    -- exercise and verify
-    f --> fmap f
-
-prop_composition :: Property
-prop_composition =
-  property $ do
-    -- set up
-    f <- intFunction
-    g <- intFunction
-
-    -- exercise and verify
-    f . g --> fmap f . fmap g
 
 prop_pure :: (Int -> Writer2 String Int) -> Property
 prop_pure f =
@@ -66,17 +48,15 @@ prop_bind :: Property
 prop_bind =
   property $ do
     -- set up
-    x <- forAll $ Gen.int (Range.constant (-100) 100)
-    wx <- forAll $ Gen.string (Range.constant 1 100) Gen.alpha
-    wy <- forAll $ Gen.string (Range.constant 1 100) Gen.alpha
-
-    let f y = writer2 (2 * y, wy)
+    fx <- intFunction
+    let f = \x -> let y = fx x in writer2 (y, show y)
+    xi <- forAll $ Gen.int (Range.constant (-100) 100)
 
     -- exercise
-    let actual = runWriter2 $ writer2 (x, wx) >>= f
+    let actual = runWriter2 $ writer2 (xi, show xi) >>= f
 
     -- exercise and verify
-    actual === (2 * x, wx ++ wy)
+    actual === (fx xi, (show xi) ++ (show $ fx xi))
 
 prop_join :: Property
 prop_join =
@@ -115,12 +95,7 @@ tests :: TestTree
 tests =
   testGroup
     "Lib.Writer2Test"
-    [ testGroup
-        "Functor"
-        [ testProperty "identity" $ property $ id --> fmap id,
-          testProperty "morphism" prop_morphism,
-          testProperty "composition" prop_composition
-        ],
+    [ functorTests (-->),
       testGroup
         "Applicative"
         [ testProperty "pure" $ prop_pure pure,
