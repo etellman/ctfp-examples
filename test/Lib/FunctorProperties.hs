@@ -1,4 +1,8 @@
-module Lib.FunctorProperties (functorTests) where
+module Lib.FunctorProperties
+  ( functorTests,
+    namedFunctorTests,
+  )
+where
 
 import Hedgehog
 import Test.Tasty
@@ -39,9 +43,16 @@ functorTests ::
   Functor m =>
   ((Int -> Int) -> (m Int -> m Int) -> PropertyT IO ()) ->
   TestTree
-functorTests mapsTo =
+functorTests mapsTo = namedFunctorTests "Functor" mapsTo
+
+namedFunctorTests ::
+  Functor m =>
+  String ->
+  ((Int -> Int) -> (m Int -> m Int) -> PropertyT IO ()) ->
+  TestTree
+namedFunctorTests name mapsTo =
   testGroup
-    "Functor"
+    name
     [ testProperty "identity" $ prop_identity mapsTo,
       testProperty "morphism" $ prop_morphism mapsTo,
       testProperty "compose" $ prop_compose mapsTo
