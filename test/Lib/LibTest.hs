@@ -1,5 +1,6 @@
 module Lib.LibTest (libTests) where
 
+import Lib.Cont2Test
 import Lib.FTest
 import Lib.Maybe2Test
 import Lib.Reader2Test
@@ -17,5 +18,6 @@ libTests =
       Lib.Reader2Test.tests,
       Lib.Writer2Test.tests,
       Lib.State2Test.tests,
-      Lib.Maybe2Test.tests
+      Lib.Maybe2Test.tests,
+      Lib.Cont2Test.tests
     ]
