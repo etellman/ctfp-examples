@@ -6,8 +6,6 @@ module Lib.Cont2
   )
 where
 
-import Control.Applicative
-
 newtype Cont2 r a = Cont2 ((a -> r) -> r)
 
 cont2 :: ((a -> r) -> r) -> Cont2 r a
@@ -22,17 +20,13 @@ instance Functor (Cont2 r) where
     let aToR = bToR . aToB
      in aToRRunner aToR
 
--- instance Applicative (Cont2 s) where
---   pure x = Cont2 (\s -> (s, x))
---   liftA2 ::
---     (f -> g -> h) ->
---     Cont2 s f ->
---     Cont2 s g ->
---     Cont2 s h
---   liftA2 k (Cont2 f) (Cont2 g) = cont2 $ \s ->
---     let (s', x) = f s
---         (s'', y) = g s'
---      in (s'', k x y)
+instance Applicative (Cont2 r) where
+  pure x = Cont2 (\f -> f x)
+  (<*>) :: Cont2 r (a -> b) -> Cont2 r a -> Cont2 r b
+  Cont2 aToBToRRunner <*> Cont2 aToRRunner = cont2 $ \bToR ->
+    aToBToRRunner $ \aToB ->
+      let aToR = bToR . aToB
+       in aToRRunner aToR
 
 -- instance Monad (Cont2 e) where
 --   (>>=) :: Cont2 s a -> (a -> Cont2 s b) -> Cont2 s b
