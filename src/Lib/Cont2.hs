@@ -2,7 +2,6 @@ module Lib.Cont2
   ( Cont2,
     runCont2,
     cont2,
-    -- join,
   )
 where
 
@@ -28,11 +27,7 @@ instance Applicative (Cont2 r) where
       let aToR = bToR . aToB
        in aToRRunner aToR
 
--- instance Monad (Cont2 e) where
---   (>>=) :: Cont2 s a -> (a -> Cont2 s b) -> Cont2 s b
---   contA >>= aToContB = cont2 $ \s ->
---     let (sx, x) = runCont2 contA s
---      in runCont2 (aToContB x) sx
-
--- join :: Cont2 s (Cont2 s a) -> Cont2 s a
--- join ss = ss >>= id
+instance Monad (Cont2 r) where
+  (>>=) :: Cont2 r a -> (a -> Cont2 r b) -> Cont2 r b
+  aToR >>= aToBToR = cont2 $ \bToR ->
+    runCont2 aToR (\a -> runCont2 (aToBToR a) bToR)
