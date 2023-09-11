@@ -11,6 +11,7 @@ import Ch14.ChapterTest
 import Ch15.ChapterTest
 import Ch18.ChapterTest
 import Ch21.ChapterTest
+import Ch22.ChapterTest
 import Lib.LibTest
 import Test.Tasty (defaultMain, testGroup)
 
@@ -32,6 +33,7 @@ main = do
           Ch14.ChapterTest.chapterTests,
           Ch15.ChapterTest.chapterTests,
           Ch18.ChapterTest.chapterTests,
-          Ch21.ChapterTest.chapterTests
+          Ch21.ChapterTest.chapterTests,
+          Ch22.ChapterTest.chapterTests
         ]
     )

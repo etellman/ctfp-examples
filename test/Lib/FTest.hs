@@ -12,12 +12,6 @@ import Test.Tasty.Hedgehog
 import TestLib.Assertions
 import TestLib.IntFunction
 
--- eqF ::
---   (F Int -> F Int) ->
---   (F Int -> F Int) ->
---   PropertyT IO ()
--- eqF = eq F
-
 prop_distribute :: Property
 prop_distribute =
   property $ do
