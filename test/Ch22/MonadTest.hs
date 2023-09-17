@@ -7,26 +7,27 @@ import qualified Hedgehog.Range as Range
 import Lib.F
 import Test.Tasty
 import Test.Tasty.Hedgehog
+import TestLib.Assertions
 import TestLib.IntFunction
 
-eqF ::
+eqFish ::
   (Int -> F Int) ->
   (Int -> F Int) ->
   PropertyT IO ()
-eqF f g = do
+eqFish f g = do
   x <- forAll $ Gen.int (Range.constant (-100) 100)
   f x === g x
+
+f3 :: Int -> F (F (F Int))
+f3 = F . F . F
 
 prop_associativity :: Property
 prop_associativity = property $ do
   -- set up
   x <- forAll $ Gen.int (Range.constant (-100) 100)
-  let f = F x
-  let ff = F f
-  let fff = F ff
 
   -- exercise and verify
-  (join . join) fff === f
+  ((join . join) $ f3 x) === F x
 
 prop_fish :: Property
 prop_fish = property $ do
@@ -35,20 +36,15 @@ prop_fish = property $ do
   g <- fmap F <$> intFunction
 
   -- exercise and verify
-  (f >=> g) `eqF` (join . fmap g . f)
+  (f >=> g) `eqFish` (join . fmap g . f)
 
-prop_identity :: Property
-prop_identity = property $ do
-  undefined
-  -- -- set up
-  -- x <- forAll $ Gen.int (Range.constant (-100) 100)
-  -- let fx = F x
+prop_compose :: Property
+prop_compose = property $ do
+  -- set up
+  let eqF3 = eq f3
 
-  -- -- exercise and verify
-  -- let g' = fmap g :: F Int -> F (F Int)
-  --     fgx = g' $ f x :: F (F Int)
-
-  -- (f >=> g) x === join fgx
+  -- exercise and verify
+  (join . join . id) `eqF3` (join . id . join)
 
 tests :: TestTree
 tests =
@@ -56,5 +52,5 @@ tests =
     "Ch22.MonadTest"
     [ testProperty "associativity" $ prop_associativity,
       testProperty "fish" $ prop_fish,
-      testProperty "identity" $ prop_identity
+      testProperty "compose" $ prop_compose
     ]

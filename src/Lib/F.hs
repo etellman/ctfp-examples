@@ -45,3 +45,6 @@ join (F (F x)) = F x
 -- alternative definition
 bind :: F a -> (a -> F b) -> F b
 bind x f = join $ fmap f x
+
+idF :: (F a -> F b) -> (F a -> F b)
+idF = id
