@@ -1,10 +1,11 @@
 module Lib.Reader2Test (tests) where
 
-import Lib.FunctorProperties
 import Control.Applicative
+import Data.Distributive as Dist
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
+import Lib.FunctorProperties
 import Lib.Reader2
 import Test.Tasty
 import Test.Tasty.Hedgehog
@@ -67,6 +68,34 @@ prop_join =
     -- exercise and verify
     runReader2 (join rr) @== f
 
+prop_distribute :: Property
+prop_distribute =
+  property $ do
+    -- set up
+    e <- forAll $ Gen.int (Range.constant (-100) 100)
+    f <- intFunction
+
+    -- exercise
+    let r = distribute (Just (reader2 f))
+
+    -- verify
+    runReader2 r e === Just (f e)
+
+prop_collect :: Property
+prop_collect =
+  property $ do
+    -- set up
+    f <- intFunction
+    g <- intFunction
+
+    m <- forAll $ Gen.int (Range.constant (-100) 100)
+    n <- forAll $ Gen.int (Range.constant (-100) 100)
+
+    let fr = \x -> reader2 $ \y -> f x + g y
+
+    -- exercise and verify
+    runReader2 (Dist.collect fr (Just m)) n === Just (f m + g n)
+
 tests :: TestTree
 tests =
   testGroup
@@ -82,5 +111,7 @@ tests =
         [ testProperty "return" $ prop_pure return,
           testProperty "bind" prop_bind,
           testProperty "join" prop_join
-        ]
+        ],
+      testProperty "distribute" prop_distribute,
+      testProperty "collect" prop_collect
     ]

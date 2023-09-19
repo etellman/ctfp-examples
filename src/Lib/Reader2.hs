@@ -7,6 +7,7 @@ module Lib.Reader2
 where
 
 import Control.Applicative
+import Data.Distributive
 
 newtype Reader2 e a = Reader2 (e -> a)
 
@@ -41,3 +42,16 @@ instance Monad (Reader2 e) where
 
 join :: Reader2 e (Reader2 e a) -> Reader2 e a
 join rr = rr >>= id
+
+instance Distributive (Reader2 s) where
+  distribute :: Functor m => m (Reader2 e a) -> Reader2 e (m a)
+  distribute ma =
+    let mf = fmap runReader2 ma -- :: m (e -> a)
+        f = distribute mf -- :: e -> m a
+     in reader2 f
+
+  collect :: Functor m => (a -> Reader2 e b) -> m a -> Reader2 e (m b)
+  collect f ma =
+    let mf = fmap f ma -- :: m (Reader2 e b)
+        rf = distribute mf -- :: Reader2 e (m b)
+     in rf
