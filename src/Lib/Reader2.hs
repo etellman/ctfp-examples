@@ -8,6 +8,7 @@ where
 
 import Control.Applicative
 import Data.Distributive
+import Data.Functor.Rep
 
 newtype Reader2 e a = Reader2 (e -> a)
 
@@ -55,3 +56,12 @@ instance Distributive (Reader2 s) where
     let mf = fmap f ma -- :: m (Reader2 e b)
         rf = distribute mf -- :: Reader2 e (m b)
      in rf
+
+instance Representable (Reader2 e) where
+  type Rep (Reader2 e) = e
+
+  tabulate :: (e -> a) -> Reader2 e a
+  tabulate f = Reader2 f
+
+  index :: Reader2 e a -> (e -> a)
+  index r = runReader2 r

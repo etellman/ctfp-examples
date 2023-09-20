@@ -2,6 +2,7 @@ module Lib.Reader2Test (tests) where
 
 import Control.Applicative
 import Data.Distributive as Dist
+import Data.Functor.Rep
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
@@ -96,6 +97,17 @@ prop_collect =
     -- exercise and verify
     runReader2 (Dist.collect fr (Just m)) n === Just (f m + g n)
 
+prop_representable :: Property
+prop_representable =
+  property $ do
+    -- set up
+    f <- intFunction
+    s <- forAll $ Gen.int (Range.constant (-100) 100)
+    let r = tabulate f :: Reader2 Int Int
+
+    -- exercise and verify
+    index r s === f s
+
 tests :: TestTree
 tests =
   testGroup
@@ -112,6 +124,10 @@ tests =
           testProperty "bind" prop_bind,
           testProperty "join" prop_join
         ],
-      testProperty "distribute" prop_distribute,
-      testProperty "collect" prop_collect
+      testGroup
+        "Distributive"
+        [ testProperty "distribute" prop_distribute,
+          testProperty "collect" prop_collect
+        ],
+      testProperty "representable" prop_representable
     ]
