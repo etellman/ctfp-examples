@@ -74,8 +74,8 @@ prop_pure f =
     -- exercise and verify
     runState2 (f x) s === (s, x)
 
-prop_join :: Property
-prop_join =
+prop_join :: (State2 Int (State2 Int Int) -> State2 Int Int) -> Property
+prop_join j =
   property $ do
     -- set up
     xi <- forAll $ Gen.int (Range.constant (-100) 100)
@@ -86,7 +86,7 @@ prop_join =
     si <- forAll $ Gen.int (Range.constant (-100) 100)
 
     -- exercise
-    let r = join rr
+    let r = j rr
 
     -- exercise and verify
     runState2 r si === ((sf' . sf) si, xi)
@@ -105,6 +105,7 @@ tests =
         "Monad"
         [ testProperty "return" $ prop_pure return,
           testProperty "bind" prop_bind,
-          testProperty "join" prop_join
+          testProperty "join" $ prop_join join,
+          testProperty "join alternate" $ prop_join join'
         ]
     ]

@@ -13,13 +13,9 @@ instance Functor (Prod s) where
 
 instance Adjunction (Prod s) (Reader2 s) where
   -- unit :: a -> F (G a)
+  unit :: a -> Reader2 s (Prod s a)
   unit a = reader2 (\s -> Prod (a, s))
 
--- counit :: G (F a) -> a
--- counit (G (F x)) = x
-
--- leftAdjunct :: (G a -> b) -> (a -> F b)
--- leftAdjunct f x = F $ f (G x)
-
--- rightAdjunct :: (a -> F b) -> (G a -> b)
--- rightAdjunct f (G x) = fromF (f x)
+  -- counit :: G (F a) -> a
+  counit :: Prod s (Reader2 s a) -> a
+  counit (Prod (r, s)) = runReader2 r s

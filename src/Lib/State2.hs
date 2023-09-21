@@ -3,10 +3,12 @@ module Lib.State2
     runState2,
     state2,
     join,
+    join',
   )
 where
 
 import Control.Applicative
+import Data.Tuple
 
 newtype State2 s a = State2 (s -> (s, a))
 
@@ -41,4 +43,9 @@ instance Monad (State2 e) where
      in runState2 (aToStateB x) sx
 
 join :: State2 s (State2 s a) -> State2 s a
-join ss = ss >>= id
+join ssa = ssa >>= id
+
+join' :: State2 s (State2 s a) -> State2 s a
+join' ssa =
+  let f s = uncurry runState2 $ swap (runState2 ssa s)
+   in state2 f
