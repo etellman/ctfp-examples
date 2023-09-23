@@ -1,5 +1,6 @@
 module Lib.FTest (tests) where
 
+import Control.Comonad
 import Data.Char
 import Data.Distributive as Dist
 import Data.Functor.Rep
@@ -87,6 +88,32 @@ prop_bind_alternate = property $ do
   -- verify
   actual === (F $ f x)
 
+prop_extend :: Property
+prop_extend = property $ do
+  -- set up
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  f <- intFunction
+  let f' (F y) = f y
+
+  -- exercise and verify
+  extend f' (F x) === (F (f x))
+
+prop_extract :: Property
+prop_extract = property $ do
+  -- set up
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+
+  -- exercise and verify
+  extract (F x) === x
+
+prop_duplicate :: Property
+prop_duplicate = property $ do
+  -- set up
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+
+  -- exercise and verify
+  duplicate (F x) === F (F x)
+
 tests :: TestTree
 tests =
   testGroup
@@ -110,5 +137,11 @@ tests =
         "Monad"
         [ testProperty "bind" prop_bind,
           testProperty "bind alternate" prop_bind_alternate
+        ],
+      testGroup
+        "Comonad"
+        [ testProperty "extend" prop_extend,
+          testProperty "extract" prop_extract,
+          testProperty "duplicate" prop_duplicate
         ]
     ]

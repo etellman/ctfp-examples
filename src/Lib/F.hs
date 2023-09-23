@@ -4,6 +4,7 @@ module Lib.F
   )
 where
 
+import Control.Comonad
 import Data.Distributive
 import Data.Functor.Rep
 
@@ -46,5 +47,9 @@ join (F (F x)) = F x
 bind :: F a -> (a -> F b) -> F b
 bind x f = join $ fmap f x
 
-idF :: (F a -> F b) -> (F a -> F b)
-idF = id
+instance Comonad F where
+  extend :: (F a -> b) -> F a -> F b
+  extend f x = F (f x)
+
+  extract :: F a -> a
+  extract = fromF
