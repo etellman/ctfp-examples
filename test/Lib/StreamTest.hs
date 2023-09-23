@@ -32,10 +32,10 @@ f `eqNonNegative` g = do
 
 prop_memoizedMatchesOriginal :: Property
 prop_memoizedMatchesOriginal = property $ do
-    f <- intFunction
-    let xs = tabulate f :: Stream Int
+  f <- intFunction
+  let xs = tabulate f :: Stream Int
 
-    (index xs) `eqNonNegative` f
+  (index xs) `eqNonNegative` f
 
 prop_distribute :: Property
 prop_distribute =
@@ -77,6 +77,40 @@ prop_extract = property $ do
   -- exercise and verify
   extract xs === x
 
+-- | sum of the first n positive integers
+sumN :: Int -> Int
+sumN n = (n * (n + 1)) `div` 2
+
+prop_sum :: Property
+prop_sum = property $ do
+  -- set up
+  n <- forAll $ Gen.int (Range.constant 0 100)
+
+  -- exercise and verify
+  sumS n (countingStream 1) === sumN n
+
+prop_average :: Property
+prop_average = property $ do
+  -- set up
+  n <- forAll $ Gen.int (Range.constant 1 100)
+  let xs = fmap fromIntegral (countingStream 1) :: Stream Rational
+
+  -- exercise and verify
+  average n xs === fromIntegral (sumN n) / fromIntegral n
+
+prop_movingAverage :: Property
+prop_movingAverage = property $ do
+  -- set up
+  n <- forAll $ Gen.int (Range.constant 1 100)
+  let positiveInts = countingStream 1
+  let expected =
+        fmap (\x -> fromIntegral x / fromIntegral n) $
+          (extend . sumS) n positiveInts
+            :: Stream Rational
+
+  -- exercise and verify
+  movingAverage n (fmap fromIntegral positiveInts) === expected
+
 tests :: TestTree
 tests =
   testGroup
@@ -98,5 +132,11 @@ tests =
         "Comonad"
         [ testProperty "extend" prop_extend,
           testProperty "extract" prop_extract
+        ],
+      testGroup
+        "Filter"
+        [ testProperty "sum" prop_sum,
+          testProperty "average" prop_average,
+          testProperty "moving average" prop_movingAverage
         ]
     ]

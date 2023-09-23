@@ -1,6 +1,9 @@
 module Lib.Stream
   ( Stream (..),
     countingStream,
+    sumS,
+    average,
+    movingAverage,
   )
 where
 
@@ -9,9 +12,6 @@ import Data.Distributive
 import Data.Functor.Rep
 
 data Stream a = Cons a (Stream a) deriving (Show)
-
-streamTail :: Stream a -> Stream a
-streamTail (Cons _ xs) = xs
 
 countingStream :: Int -> Stream Int
 countingStream n = Cons n (countingStream (n + 1))
@@ -28,7 +28,9 @@ instance (Eq a) => Eq (Stream a) where
 
 instance Distributive Stream where
   distribute :: Functor f => f (Stream a) -> Stream (f a)
-  distribute xs = Cons (fmap extract xs) (distribute $ fmap streamTail xs)
+  distribute xs =
+    let stail (Cons _ ys) = ys
+     in Cons (fmap extract xs) (distribute $ fmap stail xs)
 
   collect :: Functor f => (a -> Stream b) -> f a -> Stream (f b)
   collect h = distribute . fmap h
@@ -50,3 +52,15 @@ instance Comonad Stream where
 
   extract :: Stream a -> a
   extract (Cons a _) = a
+
+sumS :: (Num a) => Int -> Stream a -> a
+sumS n (Cons x xs)
+  | n > 0 = x + sumS (n - 1) xs
+  | n == 0 = 0
+  | otherwise = undefined
+
+average :: (Fractional a) => Int -> Stream a -> a
+average n xs = sumS n xs / fromIntegral n
+
+movingAverage :: (Fractional a) => Int -> Stream a -> Stream a
+movingAverage = extend . average
