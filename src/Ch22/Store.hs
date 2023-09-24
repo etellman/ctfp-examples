@@ -19,3 +19,6 @@ instance Comonad (Store s) where
 
   extract :: Store s a -> a
   extract (Store f s) = f s
+
+  duplicate :: Store s a -> Store s (Store s a)
+  duplicate (Store f s) = Store (Store f) s

@@ -41,6 +41,15 @@ prop_extract = property $ do
   -- exercise and verify
   extract (Store f s) === f s
 
+prop_duplicate :: Property
+prop_duplicate = property $ do
+  -- set up
+  s <- forAll $ Gen.int (Range.constant (-100) 100)
+  f <- intFunction
+
+  -- exercise and verify
+  (extract . extract $ duplicate (Store f s)) === f s
+
 tests :: TestTree
 tests =
   testGroup
@@ -49,6 +58,7 @@ tests =
       testGroup
         "Comonad"
         [ testProperty "extend" prop_extend,
-          testProperty "extract" prop_extract
+          testProperty "extract" prop_extract,
+          testProperty "duplicate" prop_duplicate
         ]
     ]
