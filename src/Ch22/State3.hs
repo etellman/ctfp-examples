@@ -1,7 +1,4 @@
-module Ch22.State3
-  (
-  )
-where
+module Ch22.State3 () where
 
 import Data.Functor.Adjunction
 import Lib.Reader2
