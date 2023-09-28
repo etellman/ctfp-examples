@@ -1,4 +1,4 @@
-module Ch23.NatF
+module Ch23.Catamorphism
   ( NatF (..),
     natToInt,
     intToNat,
@@ -10,10 +10,6 @@ where
 import Ch23.Fix
 
 data NatF a = ZeroF | SuccF (NatF a)
-
-instance Functor NatF where
-  fmap f ZeroF = ZeroF
-  fmap f (SuccF x) = SuccF (fmap f $ x)
 
 natToInt :: NatF a -> Int
 natToInt ZeroF = 0
