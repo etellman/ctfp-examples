@@ -1,24 +1,18 @@
 module Ch23.Catamorphism
-  (
+  ( cata,
+    fibF,
   )
 where
 
--- import Ch23.Fix
+import Ch23.Fix
+import Ch23.NatF
 
--- data NatF a = ZeroF | SuccF (NatF a)
+-- add intermediate steps to clarify what's going on
+cata :: Functor f => (f a -> a) -> Fix f -> a
+cata alg = alg . fmap (cata alg) . unfix
 
--- natToInt :: NatF a -> Int
--- natToInt ZeroF = 0
--- natToInt (SuccF x) = natToInt x + 1
-
--- intToNat :: Int -> NatF a
--- intToNat 0 = ZeroF
--- intToNat n = SuccF $ intToNat (n - 1)
-
--- natToIntFix :: Fix NatF -> Int
--- natToIntFix (Fix ZeroF) = 0
--- natToIntFix (Fix (SuccF x)) = natToIntFix (Fix x) + 1
-
--- intToNatFix :: Int -> Fix NatF
--- intToNatFix 0 = Fix ZeroF
--- intToNatFix n = Fix $ SuccF (intToNat (n - 1))
+fibF :: NatF (Integer, Integer) -> (Integer, Integer)
+fibF ZeroF = (1, 1)
+fibF (SuccF x) =
+  let (m, n) = fibF x
+   in (n, m + n)

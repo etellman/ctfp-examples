@@ -1,5 +1,6 @@
 module Ch23.CatamorphismTest (tests) where
 
+import Ch23.Catamorphism
 import Ch23.Fix
 import Ch23.NatF
 import Hedgehog as H
@@ -21,15 +22,31 @@ prop_commute = property $ do
   -- set up
   n <- forAll $ Gen.int (Range.constant 0 100)
   let ffx = fmap Fix $ intToNat n :: NatF (Fix NatF)
-      m' = natToInt . fmap m' . unfix
+      m' = cata natToInt
 
   -- exercise and verify
   (m . Fix) ffx === (natToInt . fmap m) ffx
   (m' . Fix) ffx === (natToInt . fmap m') ffx
 
+simple_fib :: Int -> Integer
+simple_fib n =
+  let fibs = 1 : 1 : zipWith (+) fibs (tail fibs)
+   in head $ drop n fibs
+
+prop_fib :: Property
+prop_fib = property $ do
+  -- set up
+  n <- forAll $ Gen.int (Range.constant 1 500)
+  let fib = fst . cata fibF :: Fix NatF -> Integer
+      fn = Fix (intToNat n)
+
+  -- exercise and verify
+  fib fn === simple_fib n
+
 tests :: TestTree
 tests =
   testGroup
     "Ch23.CatamorphismTest"
-    [ testProperty "commute" $ prop_commute
+    [ testProperty "commute" $ prop_commute,
+      testProperty "Fibonacci" $ prop_fib
     ]
