@@ -27,6 +27,7 @@ dependencies:
 - containers
 - safe-money >= 0.7
 - comonad >= 5.0.8
+- ieee754 >= 0.8.0
 
 ghc-options:
 - -Wall

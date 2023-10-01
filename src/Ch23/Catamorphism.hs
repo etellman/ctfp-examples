@@ -3,14 +3,15 @@ module Ch23.Catamorphism
     fibF,
     ListF (..),
     toList,
-    fromList,
     lenAlg,
+    sumAlg,
     eqListF,
   )
 where
 
 import Ch23.Fix
 import Ch23.NatF
+import Control.Comonad
 
 -- add intermediate steps to clarify what's going on
 cata :: Functor f => (f a -> a) -> Fix f -> a
@@ -24,13 +25,19 @@ fibF (SuccF x) =
 
 data ListF e a = NilF | ConsF e a deriving (Eq, Show)
 
-instance Functor (ListF e) where
-  fmap _ NilF = NilF
-  fmap f (ConsF x y) = ConsF x (f y)
+instance Comonad (ListF e) where
+  extend :: (ListF e a -> b) -> ListF e a -> ListF e b
+  extend f x@(ConsF e _) = ConsF e (f x)
+  extend _ NilF = NilF
 
-fromList :: Fix (ListF e) -> [e]
-fromList (Fix NilF) = []
-fromList (Fix (ConsF x xs)) = x : fromList xs
+  extract :: ListF e a -> a
+  extract (ConsF _ a) = a
+  extract NilF = undefined
+
+instance Functor (ListF e) where
+  fmap :: (a -> b) -> ListF e a -> ListF e b
+  fmap _ NilF = NilF
+  fmap f (ConsF e a) = ConsF e (f a)
 
 toList :: [e] -> Fix (ListF e)
 toList [] = Fix NilF
@@ -45,3 +52,7 @@ eqListF (Fix (ConsF x xs)) (y : ys) = x == y && xs `eqListF` ys
 lenAlg :: ListF e Int -> Int
 lenAlg NilF = 0
 lenAlg (ConsF _ n) = n + 1
+
+sumAlg :: ListF Double Double -> Double
+sumAlg NilF = 0.0
+sumAlg (ConsF x total) = x + total
