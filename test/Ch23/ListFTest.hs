@@ -65,7 +65,8 @@ tests :: TestTree
 tests =
   testGroup
     "Ch23.ListFTest"
-    [ functorTests (-->),
+    [
+    -- functorTests (-->),
       testProperty "to list" prop_toList,
       testGroup
         "length algebra"

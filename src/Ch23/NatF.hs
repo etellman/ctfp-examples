@@ -4,15 +4,17 @@ module Ch23.NatF
     intToNat,
     natToIntFix,
     intToNatFix,
+    fibF,
   )
 where
 
 import Ch23.Fix
 
-data NatF a = ZeroF | SuccF (NatF a)
+data NatF a = ZeroF | SuccF (NatF a) deriving (Eq, Show)
 
 instance Functor NatF where
-  fmap f ZeroF = ZeroF
+  fmap :: (a -> b) -> NatF a -> NatF b
+  fmap _ ZeroF = ZeroF
   fmap f (SuccF x) = SuccF (fmap f $ x)
 
 natToInt :: NatF a -> Int
@@ -30,3 +32,9 @@ natToIntFix (Fix (SuccF x)) = natToIntFix (Fix x) + 1
 intToNatFix :: Int -> Fix NatF
 intToNatFix 0 = Fix ZeroF
 intToNatFix n = Fix $ SuccF (intToNat (n - 1))
+
+fibF :: NatF (Integer, Integer) -> (Integer, Integer)
+fibF ZeroF = (1, 1)
+fibF (SuccF x) =
+  let (m, n) = fibF x
+   in (n, m + n)
