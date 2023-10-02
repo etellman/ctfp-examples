@@ -7,9 +7,7 @@ module Ch23.ListF
   )
 where
 
-import Ch23.Catamorphism
 import Ch23.Fix
-import Ch23.NatF
 import Control.Comonad
 
 data ListF e a = NilF | ConsF e a deriving (Eq, Show)

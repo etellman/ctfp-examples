@@ -13,9 +13,9 @@ import Test.Tasty.Hedgehog
 
 (-->) :: (Int -> Int) -> (NatF Int -> NatF Int) -> PropertyT IO ()
 (-->) _ f' = do
-  n <- forAll $ Gen.int (Range.constant 0 200)
+  n <- forAll $ intToNat <$> Gen.int (Range.constant 0 200)
 
-  f' (intToNat n) === intToNat n
+  f' n === n
 
 infixr 0 -->
 

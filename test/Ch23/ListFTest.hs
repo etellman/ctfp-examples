@@ -1,7 +1,6 @@
 module Ch23.ListFTest (tests) where
 
 import Ch23.Catamorphism
-import Ch23.Fix
 import Ch23.ListF
 import Control.Comonad
 import Data.AEq ((~==))
@@ -65,8 +64,7 @@ tests :: TestTree
 tests =
   testGroup
     "Ch23.ListFTest"
-    [
-    -- functorTests (-->),
+    [ functorTests (-->),
       testProperty "to list" prop_toList,
       testGroup
         "length algebra"
