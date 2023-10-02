@@ -11,9 +11,9 @@ import Test.Tasty
 import Test.Tasty.Hedgehog
 import TestLib.IntFunction
 
-(-->) :: (Int -> Int) -> (Writer2 String Int -> Writer2 String Int) -> PropertyT IO ()
+(-->) :: (Char -> Int) -> (Writer2 String Char -> Writer2 String Int) -> PropertyT IO ()
 (-->) f f' = do
-  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  x <- forAll $ Gen.alpha
   s <- forAll $ Gen.string (Range.constant 0 100) Gen.alpha
 
   writer2 (f x, s) === f' (writer2 (x, s))

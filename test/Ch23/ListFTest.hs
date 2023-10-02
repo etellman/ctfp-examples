@@ -12,10 +12,10 @@ import Test.Tasty
 import Test.Tasty.HUnit
 import Test.Tasty.Hedgehog
 
-(-->) :: (Int -> Int) -> (ListF Int Int -> ListF Int Int) -> PropertyT IO ()
+(-->) :: (Char -> Int) -> (ListF Int Char -> ListF Int Int) -> PropertyT IO ()
 (-->) f f' = do
   e <- forAll $ Gen.int (Range.constant (-100) 100)
-  a <- forAll $ Gen.int (Range.constant (-100) 100)
+  a <- forAll $ Gen.alpha
 
   (extract $ f' (ConsF e a)) === f a
 

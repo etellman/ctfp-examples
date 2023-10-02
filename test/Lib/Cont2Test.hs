@@ -2,6 +2,7 @@ module Lib.Cont2Test (tests) where
 
 import Control.Applicative
 import Control.Monad
+import Data.Char
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
@@ -11,17 +12,17 @@ import Test.Tasty
 import Test.Tasty.Hedgehog
 import TestLib.IntFunction
 
-(-->) :: (Int -> Int) -> (Cont2 Int Int -> Cont2 Int Int) -> PropertyT IO ()
+continue :: a -> Cont2 Int a
+continue x = cont2 $ \f -> f x
+
+(-->) :: (Char -> Int) -> (Cont2 Int Char -> Cont2 Int Int) -> PropertyT IO ()
 (-->) f f' = do
-  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  x <- forAll $ Gen.alpha
   g <- intFunction
 
   (g . f) x === runCont2 (f' $ continue x) g
 
 infixr 0 -->
-
-continue :: Int -> Cont2 Int Int
-continue x = cont2 $ \f -> f x
 
 prop_liftA2 :: Property
 prop_liftA2 =

@@ -2,6 +2,7 @@ module Ch22.StoreTest (tests) where
 
 import Ch22.Store
 import Control.Comonad
+import Data.Char
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
@@ -10,12 +11,11 @@ import Test.Tasty
 import Test.Tasty.Hedgehog
 import TestLib.IntFunction
 
-(-->) :: (Int -> Int) -> (Store Int Int -> Store Int Int) -> PropertyT IO ()
+(-->) :: (Char -> Int) -> (Store Char Char -> Store Char Int) -> PropertyT IO ()
 (-->) f f' = do
-  s <- forAll $ Gen.int (Range.constant (-100) 100)
-  g <- intFunction
+  c <- forAll $ Gen.alpha
 
-  (f . g) s === extract (f' (Store g s))
+  (f . toUpper) c === extract (f' (Store toUpper c))
 
 infixr 0 -->
 

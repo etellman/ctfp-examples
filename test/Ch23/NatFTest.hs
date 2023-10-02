@@ -11,11 +11,13 @@ import Test.Tasty
 import Test.Tasty.HUnit
 import Test.Tasty.Hedgehog
 
-(-->) :: (Int -> Int) -> (NatF Int -> NatF Int) -> PropertyT IO ()
+(-->) :: (Char -> Int) -> (NatF Char -> NatF Int) -> PropertyT IO ()
 (-->) _ f' = do
-  n <- forAll $ intToNat <$> Gen.int (Range.constant 0 200)
+  n <- forAll $ Gen.int (Range.constant 0 200)
+  let nc = intToNat n :: NatF Char
+      ni = intToNat n :: NatF Int
 
-  f' n === n
+  f' nc === ni
 
 infixr 0 -->
 

@@ -12,15 +12,15 @@ import Test.Tasty.HUnit
 import Test.Tasty.Hedgehog
 import TestLib.IntFunction
 
-(-->) :: (Int -> Int) -> (Maybe2 Int -> Maybe2 Int) -> PropertyT IO ()
+(-->) :: (Char -> Int) -> (Maybe2 Char -> Maybe2 Int) -> PropertyT IO ()
 (-->) f f' = do
-  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  x <- forAll $ Gen.alpha
 
   (Just2 $ f x) === (f' $ Just2 x)
 
 infixr 0 -->
 
-mapToNothing :: (Int -> Int) -> (Maybe2 Int -> Maybe2 Int) -> PropertyT IO ()
+mapToNothing :: (Char -> Int) -> (Maybe2 Char -> Maybe2 Int) -> PropertyT IO ()
 mapToNothing _ f' = f' Nothing2 === Nothing2
 
 prop_pure :: (Int -> Maybe2 Int) -> Property

@@ -5,19 +5,9 @@ import Control.Comonad
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
-import Lib.FunctorProperties
 import Test.Tasty
 import Test.Tasty.Hedgehog
 import TestLib.IntFunction
-
-(-->) :: (Int -> Int) -> (Store Int Int -> Store Int Int) -> PropertyT IO ()
-(-->) f f' = do
-  s <- forAll $ Gen.int (Range.constant (-100) 100)
-  g <- intFunction
-
-  (f . g) s === extract (f' (Store g s))
-
-infixr 0 -->
 
 prop_extend :: Property
 prop_extend = property $ do
@@ -54,8 +44,7 @@ tests :: TestTree
 tests =
   testGroup
     "Ch23.FixTest"
-    [ functorTests (-->),
-      testGroup
+    [ testGroup
         "Comonad"
         [ testProperty "extend" prop_extend,
           testProperty "extract" prop_extract,

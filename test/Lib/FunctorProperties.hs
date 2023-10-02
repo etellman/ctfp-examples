@@ -4,6 +4,7 @@ module Lib.FunctorProperties
   )
 where
 
+import Data.Char
 import Hedgehog
 import Test.Tasty
 import Test.Tasty.Hedgehog
@@ -11,49 +12,44 @@ import TestLib.IntFunction
 
 prop_morphism ::
   Functor m =>
-  ((Int -> Int) -> (m Int -> m Int) -> PropertyT IO ()) ->
+  ((Char -> Int) -> (m Char -> m Int) -> PropertyT IO ()) ->
   Property
 prop_morphism mapsTo = property $ do
   -- set up
   f <- intFunction
+  let cf = f . ord
 
   -- exercise and verify
-  f `mapsTo` fmap f
-
-prop_identity ::
-  Functor m =>
-  ((Int -> Int) -> (m Int -> m Int) -> PropertyT IO ()) ->
-  Property
-prop_identity mapsTo = property $ id `mapsTo` fmap id
+  cf `mapsTo` fmap cf
 
 prop_compose ::
   Functor m =>
-  ((Int -> Int) -> (m Int -> m Int) -> PropertyT IO ()) ->
+  ((Char -> Int) -> (m Char -> m Int) -> PropertyT IO ()) ->
   Property
 prop_compose mapsTo =
   property $ do
     -- set up
     f <- intFunction
     g <- intFunction
+    let cg = g . ord
 
     -- exercise and verify
-    (f . g) `mapsTo` (fmap f . fmap g)
+    (f . cg) `mapsTo` (fmap f . fmap cg)
 
 functorTests ::
   Functor m =>
-  ((Int -> Int) -> (m Int -> m Int) -> PropertyT IO ()) ->
+  ((Char -> Int) -> (m Char -> m Int) -> PropertyT IO ()) ->
   TestTree
 functorTests mapsTo = namedFunctorTests "Functor" mapsTo
 
 namedFunctorTests ::
   Functor m =>
   String ->
-  ((Int -> Int) -> (m Int -> m Int) -> PropertyT IO ()) ->
+  ((Char -> Int) -> (m Char -> m Int) -> PropertyT IO ()) ->
   TestTree
 namedFunctorTests name mapsTo =
   testGroup
     name
-    [ testProperty "identity" $ prop_identity mapsTo,
-      testProperty "morphism" $ prop_morphism mapsTo,
+    [ testProperty "morphism" $ prop_morphism mapsTo,
       testProperty "compose" $ prop_compose mapsTo
     ]

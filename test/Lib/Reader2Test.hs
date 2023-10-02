@@ -1,6 +1,7 @@
 module Lib.Reader2Test (tests) where
 
 import Control.Applicative
+import Data.Char
 import Data.Distributive as Dist
 import Data.Functor.Rep
 import Hedgehog as H
@@ -13,11 +14,11 @@ import Test.Tasty.Hedgehog
 import TestLib.Assertions
 import TestLib.IntFunction
 
-(-->) :: (Int -> Int) -> (Reader2 Int Int -> Reader2 Int Int) -> PropertyT IO ()
+(-->) :: (Char -> Int) -> (Reader2 Int Char -> Reader2 Int Int) -> PropertyT IO ()
 (-->) f f' = do
-  e <- forAll $ Gen.int (Range.constant (-100) 100)
+  e <- forAll $ Gen.alpha
 
-  f e === runReader2 (f' (reader2 id)) e
+  f e === runReader2 (f' (reader2 chr)) (ord e)
 
 infixr 0 -->
 

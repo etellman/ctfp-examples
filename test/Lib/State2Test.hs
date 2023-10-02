@@ -11,15 +11,16 @@ import Test.Tasty
 import Test.Tasty.Hedgehog
 import TestLib.IntFunction
 
-(-->) :: (Int -> Int) -> (State2 Int Int -> State2 Int Int) -> PropertyT IO ()
+(-->) :: (Char -> Int) -> (State2 Char Char -> State2 Char Int) -> PropertyT IO ()
 (-->) f f' = do
-  s <- forAll $ Gen.int (Range.constant (-100) 100)
-  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  s <- forAll $ Gen.alpha
+  x <- forAll $ Gen.alpha
 
   let ss = f' (state2 $ \s' -> (s', x))
-      (_, x') = runState2 ss s
+      (s2, x') = runState2 ss s
 
   f x === x'
+  s2 === s
 
 infixr 0 -->
 
