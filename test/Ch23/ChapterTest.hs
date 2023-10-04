@@ -6,6 +6,7 @@ import Ch23.FixTest
 import Ch23.ListFTest
 import Ch23.MonFTest
 import Ch23.NatFTest
+import Ch23.StreamFTest
 import Test.Tasty
 
 chapterTests :: TestTree
@@ -17,5 +18,6 @@ chapterTests =
       Ch23.NatFTest.tests,
       Ch23.ListFTest.tests,
       Ch23.AlgebraTest.tests,
-      Ch23.CoalgebraTest.tests
+      Ch23.CoalgebraTest.tests,
+      Ch23.StreamFTest.tests
     ]
