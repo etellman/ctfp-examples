@@ -1,6 +1,7 @@
 module Ch23.ChapterTest (chapterTests) where
 
 import Ch23.AlgebraTest
+import Ch23.CoalgebraTest
 import Ch23.FixTest
 import Ch23.ListFTest
 import Ch23.MonFTest
@@ -15,5 +16,6 @@ chapterTests =
       Ch23.MonFTest.tests,
       Ch23.NatFTest.tests,
       Ch23.ListFTest.tests,
-      Ch23.AlgebraTest.tests
+      Ch23.AlgebraTest.tests,
+      Ch23.CoalgebraTest.tests
     ]
