@@ -2,7 +2,6 @@ module Lib.Cont2Test (tests) where
 
 import Control.Applicative
 import Control.Monad
-import Data.Char
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range

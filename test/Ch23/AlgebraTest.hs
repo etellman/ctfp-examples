@@ -1,6 +1,6 @@
-module Ch23.CatamorphismTest (tests) where
+module Ch23.AlgebraTest (tests) where
 
-import Ch23.Catamorphism
+import Ch23.Algebra
 import Ch23.Fix
 import Ch23.NatF
 import Hedgehog as H
@@ -29,5 +29,5 @@ prop_commute = property $ do
   (m' . Fix) ffx === (natToInt . fmap m') ffx
 
 tests :: TestTree
-tests = testGroup "Ch23.CatamorphismTest" [
+tests = testGroup "Ch23.AlgebraTest" [
   testProperty "commute" $ prop_commute]

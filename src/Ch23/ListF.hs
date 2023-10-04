@@ -8,18 +8,8 @@ module Ch23.ListF
 where
 
 import Ch23.Fix
-import Control.Comonad
 
 data ListF e a = NilF | ConsF e a deriving (Eq, Show)
-
-instance Comonad (ListF e) where
-  extend :: (ListF e a -> b) -> ListF e a -> ListF e b
-  extend f x@(ConsF e _) = ConsF e (f x)
-  extend _ NilF = NilF
-
-  extract :: ListF e a -> a
-  extract (ConsF _ a) = a
-  extract NilF = undefined
 
 instance Functor (ListF e) where
   fmap :: (a -> b) -> ListF e a -> ListF e b

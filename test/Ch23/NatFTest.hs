@@ -1,6 +1,6 @@
 module Ch23.NatFTest (tests) where
 
-import Ch23.Catamorphism
+import Ch23.Algebra
 import Ch23.Fix
 import Ch23.NatF
 import Hedgehog as H

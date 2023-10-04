@@ -1,8 +1,7 @@
 module Ch23.ListFTest (tests) where
 
-import Ch23.Catamorphism
+import Ch23.Algebra
 import Ch23.ListF
-import Control.Comonad
 import Data.AEq ((~==))
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
@@ -17,7 +16,7 @@ import Test.Tasty.Hedgehog
   e <- forAll $ Gen.int (Range.constant (-100) 100)
   a <- forAll $ Gen.alpha
 
-  (extract $ f' (ConsF e a)) === f a
+  f' (ConsF e a) === ConsF e (f a)
 
 infixr 0 -->
 
