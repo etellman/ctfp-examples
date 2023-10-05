@@ -1,8 +1,9 @@
 module Ch23.StreamF
   ( StreamF (..),
     squares,
-    timesn,
+    timesN,
     toListC,
+    primes,
   )
 where
 
@@ -18,9 +19,15 @@ squares :: Num a => [a] -> StreamF a [a]
 squares (x : xs) = StreamF (x ^ (2 :: Int)) xs
 squares _ = undefined
 
-timesn :: Num a => a -> [a] -> StreamF a [a]
-timesn n (x : xs) = StreamF (x * n) xs
-timesn _ [] = undefined
+timesN :: Num a => a -> [a] -> StreamF a [a]
+timesN n (x : xs) = StreamF (x * n) xs
+timesN _ [] = undefined
+
+primes :: Integral a => [a] -> StreamF a [a]
+primes (x : xs) =
+  let multiple a b = b `mod` a == 0
+   in StreamF x $ (filter (not . multiple x)) xs
+primes [] = undefined
 
 toListC :: Fix (StreamF e) -> [e]
 toListC = cata a1
