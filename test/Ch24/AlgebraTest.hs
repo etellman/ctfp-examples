@@ -10,28 +10,34 @@ import Test.Tasty
 import Test.Tasty.Hedgehog
 import TestLib.Assertions
 
-prop_return :: Property
-prop_return = property $ do
-  -- set up
-  let alg = extract :: F Int -> Int
-
-  -- exercise and verify
+prop_return :: Monad m => (m Int -> Int) -> Property
+prop_return alg = property $ do
   alg . return @== id
 
-prop_join :: Property
-prop_join = property $ do
+prop_join :: Monad m => (m Int -> Int) -> Property
+prop_join alg = property $ do
   -- set up
-  ffx <- forAll $ F <$> F <$> Gen.int (Range.constant (-100) 100)
-  let alg = extract :: F Int -> Int
-      liftedAlg = fmap alg :: F (F Int) -> F Int
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  let mmx = (return . return) x
 
   -- exercise and verify
-  (alg . join) ffx === (alg . liftedAlg) ffx
+  (alg . join) mmx === (alg . fmap alg) mmx
 
 tests :: TestTree
 tests =
   testGroup
     "Ch24.AlgebraTest"
-    [ testProperty "return" $ prop_return,
-      testProperty "join" $ prop_join
+    [ testGroup
+        "coherence conditions"
+        [ testGroup
+            "F"
+            [ testProperty "return" $ prop_return (extract :: F Int -> Int),
+              testProperty "join" $ prop_join (extract :: F Int -> Int)
+            ],
+          testGroup
+            "list"
+            [ testProperty "return" $ prop_return head,
+              testProperty "join" $ prop_join head
+            ]
+        ]
     ]
