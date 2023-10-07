@@ -1,4 +1,4 @@
-module Ch24.AlgebraTest (tests) where
+module Ch24.CoherenceTest (tests) where
 
 import Control.Comonad
 import Control.Monad
@@ -26,18 +26,15 @@ prop_join alg = property $ do
 tests :: TestTree
 tests =
   testGroup
-    "Ch24.AlgebraTest"
+    "Ch24.CoherenceTest"
     [ testGroup
-        "coherence conditions"
-        [ testGroup
-            "F"
-            [ testProperty "return" $ prop_return (extract :: F Int -> Int),
-              testProperty "join" $ prop_join (extract :: F Int -> Int)
-            ],
-          testGroup
-            "list"
-            [ testProperty "return" $ prop_return head,
-              testProperty "join" $ prop_join head
-            ]
+        "F"
+        [ testProperty "return" $ prop_return (extract :: F Int -> Int),
+          testProperty "join" $ prop_join (extract :: F Int -> Int)
+        ],
+      testGroup
+        "list"
+        [ testProperty "return" $ prop_return head,
+          testProperty "join" $ prop_join head
         ]
     ]
