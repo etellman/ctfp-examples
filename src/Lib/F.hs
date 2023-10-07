@@ -41,7 +41,7 @@ instance Monad F where
   F x >>= f = f x
 
 join :: F (F a) -> F a
-join (F (F x)) = F x
+join (F (F a)) = F a
 
 -- alternative definition
 bind :: F a -> (a -> F b) -> F b
