@@ -34,7 +34,20 @@ tests =
         ],
       testGroup
         "list"
-        [ testProperty "return" $ prop_return head,
-          testProperty "join" $ prop_join head
+        [ testGroup
+            "head"
+            [ testProperty "return" $ prop_return head,
+              testProperty "join" $ prop_join head
+            ],
+          testGroup
+            "sum"
+            [ testProperty "return" $ prop_return (sum :: [Int] -> Int),
+              testProperty "join" $ prop_join (sum :: [Int] -> Int)
+            ],
+          testGroup
+            "foldr"
+            [ testProperty "return" $ prop_return (foldr (*) 1 :: [Int] -> Int),
+              testProperty "join" $ prop_join (foldr (*) 1 :: [Int] -> Int)
+            ]
         ]
     ]
