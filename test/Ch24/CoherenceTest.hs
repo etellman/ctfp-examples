@@ -23,31 +23,23 @@ prop_join alg = property $ do
   -- exercise and verify
   (alg . join) mmx === (alg . fmap alg) mmx
 
+coherence_properties :: Monad m => String -> (m Int -> Int) -> TestTree
+coherence_properties name alg =
+  testGroup
+    name
+    [ testProperty "return" $ prop_return alg,
+      testProperty "join" $ prop_join alg
+    ]
+
 tests :: TestTree
 tests =
   testGroup
     "Ch24.CoherenceTest"
-    [ testGroup
-        "F"
-        [ testProperty "return" $ prop_return (extract :: F Int -> Int),
-          testProperty "join" $ prop_join (extract :: F Int -> Int)
-        ],
+    [ coherence_properties "F" (extract :: F Int -> Int),
       testGroup
         "list"
-        [ testGroup
-            "head"
-            [ testProperty "return" $ prop_return head,
-              testProperty "join" $ prop_join head
-            ],
-          testGroup
-            "sum"
-            [ testProperty "return" $ prop_return (sum :: [Int] -> Int),
-              testProperty "join" $ prop_join (sum :: [Int] -> Int)
-            ],
-          testGroup
-            "foldr"
-            [ testProperty "return" $ prop_return (foldr (*) 1 :: [Int] -> Int),
-              testProperty "join" $ prop_join (foldr (*) 1 :: [Int] -> Int)
-            ]
+        [ coherence_properties "head" head,
+          coherence_properties "sum" (sum :: [Int] -> Int),
+          coherence_properties "foldr" (foldr (*) 1 :: [Int] -> Int)
         ]
     ]
