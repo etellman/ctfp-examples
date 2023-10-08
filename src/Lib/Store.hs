@@ -1,4 +1,4 @@
-module Ch22.Store
+module Lib.Store
   ( Store (..),
   )
 where

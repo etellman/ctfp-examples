@@ -1,6 +1,6 @@
 module Ch23.FixTest (tests) where
 
-import Ch22.Store
+import Lib.Store
 import Control.Comonad
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen

@@ -1,6 +1,6 @@
 module Ch22.StoreTest (tests) where
 
-import Ch22.Store
+import Lib.Store
 import Control.Comonad
 import Data.Char
 import Hedgehog as H
