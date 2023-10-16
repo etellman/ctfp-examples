@@ -23,9 +23,9 @@ prop_extract = property $ do
   -- set up
   x <- forAll $ Gen.int (Range.constant (-100) 100)
   y <- forAll $ Gen.int (Range.constant (-100) 100)
-  let a = Pair x y
+  let xy = Pair x y
 
-  (extract . coalgX) a === a
+  (extract . coalgX) xy === xy
 
 tests :: TestTree
 tests =

@@ -19,6 +19,26 @@ import TestLib.IntFunction
 
 infixr 0 -->
 
+data Pair = Pair Int Int deriving (Eq, Show)
+
+setx :: Pair -> Int -> Pair
+setx (Pair _ y) x = Pair x y
+
+prop_set :: Property
+prop_set = property $ do
+  -- set up
+  x <- forAll $ Gen.int (Range.constant (-100) 100)
+  y <- forAll $ Gen.int (Range.constant (-100) 100)
+  x' <- forAll $ Gen.int (Range.constant (-100) 100)
+
+  let initial = Pair x y
+
+  -- exercise
+  let storeX = Store (setx initial) x'
+
+  -- exercise and verify
+  extract storeX === Pair x' y
+
 prop_extend :: Property
 prop_extend = property $ do
   -- set up
@@ -55,6 +75,7 @@ tests =
   testGroup
     "Ch22.StoreTest"
     [ functorTests (-->),
+      testProperty "set and get" prop_set,
       testGroup
         "Comonad"
         [ testProperty "extend" prop_extend,
