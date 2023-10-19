@@ -82,20 +82,9 @@ tests =
                     [3, 4, 5]
                   ]
             takeN 3 xs @?= expected,
-          testCase "children" $ do
-            let xs = [1 .. 6] :: [Int]
-                expected = []
-                  -- [ Partition [1, 2, 3] [Partition [4, 5] []],
-                  --   Partition [1, 2, 4] [Partition [3, 5] []],
-                  --   Partition [1, 2, 5] [Partition [3, 4] []],
-                  --   Partition [1, 3, 4] [Partition [2, 5] []],
-                  --   Partition [1, 3, 5] [Partition [2, 4] []],
-                  --   Partition [1, 4, 5] [Partition [2, 3] []],
-                  --   Partition [2, 3, 4] [Partition [1, 5] []],
-                  --   Partition [2, 3, 5] [Partition [1, 4] []],
-                  --   Partition [2, 4, 5] [Partition [1, 3] []],
-                  --   Partition [3, 4, 5] [Partition [1, 2] []]
-                  -- ]
-            (length $ children 2 xs []) @?= 1
+          testCase "groups" $ do
+            let xs = [1 .. 4] :: [Int]
+                expected = [[[1, 2], [3, 4]], [[1, 3], [2, 4]], [[1, 4], [2, 3]]]
+            (groups 2 xs) @?= expected
         ]
     ]
