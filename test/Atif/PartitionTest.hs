@@ -1,6 +1,7 @@
 module Atif.PartitionTest (tests) where
 
 import Atif.Partition
+import Data.List (sort)
 import Data.List.Unique (allUnique)
 import Hedgehog as H
 import qualified Hedgehog.Gen as Gen
@@ -20,7 +21,7 @@ prop_takeNZero = property $ do
         (Gen.int $ Range.constant (-100) 100)
 
   -- exercise and verify
-  takeN 0 xs === [[]]
+  takeN (==) 0 xs === [[]]
 
 prop_takeNNoChoices :: Property
 prop_takeNNoChoices = property $ do
@@ -28,7 +29,7 @@ prop_takeNNoChoices = property $ do
   n <- forAll $ Gen.int (Range.constant 1 100)
 
   -- exercise and verify
-  H.assert $ null $ takeN n []
+  H.assert $ null $ takeN (==) n ([] :: [Int])
 
 prop_takeOne :: Property
 prop_takeOne = property $ do
@@ -40,7 +41,7 @@ prop_takeOne = property $ do
         (Gen.int $ Range.constant (-100) 100)
 
   -- exercise and verify
-  takeN 1 xs === fmap (: []) xs
+  takeN (==) 1 xs === fmap (: []) xs
 
 prop_takeN :: Property
 prop_takeN = property $ do
@@ -50,12 +51,28 @@ prop_takeN = property $ do
   let xs = [1 .. howMany]
 
   -- exercise
-  let actual = takeN n xs
+  let actual = takeN (==) n xs
 
   -- verify
   length actual === howMany `choose` n
   H.assert $ all allUnique actual
   H.assert $ allUnique actual
+
+prop_partition :: Property
+prop_partition = property $ do
+  -- set up
+  numGroups <- forAll $ Gen.int (Range.constant 1 3)
+  groupSize <- forAll $ Gen.int (Range.constant 1 3)
+  let xs = [1 .. numGroups * groupSize]
+
+  -- exercise
+  let actual = partition numGroups xs
+
+  -- verify
+  H.assert $ all allUnique actual
+  H.assert $ allUnique actual
+  H.assert $ all (\g -> length g == numGroups) actual
+  H.assert $ all (\g -> (sort . concat) g == xs) actual
 
 tests :: TestTree
 tests =
@@ -81,10 +98,14 @@ tests =
                     [2, 4, 5],
                     [3, 4, 5]
                   ]
-            takeN 3 xs @?= expected,
-          testCase "groups" $ do
+            takeN (==) 3 xs @?= expected
+        ],
+      testGroup
+        "partition"
+        [ testCase "partition 4" $ do
             let xs = [1 .. 4] :: [Int]
                 expected = [[[1, 2], [3, 4]], [[1, 3], [2, 4]], [[1, 4], [2, 3]]]
-            (groups 2 xs) @?= expected
+            (partition 2 xs) @?= expected,
+          testProperty "partition" prop_partition
         ]
     ]

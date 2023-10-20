@@ -1,26 +1,24 @@
 module Atif.Partition
   ( takeN,
-    groups,
+    partition,
   )
 where
 
 import Data.List (intersect)
 
-groups :: Int -> [Int] -> [[[Int]]]
-groups nGroups xs =
-  let combinations = takeN (length xs `div` nGroups) xs
-    in partition nGroups combinations
+-- all the ways to partition a list into non-overlapping sub-lists
+partition :: Eq a => Int -> [a] -> [[[a]]]
+partition numGroups xs =
+  let elementsPerGroup = length xs `div` numGroups
+      groups = takeN (==) elementsPerGroup xs
+      overlapping x y = not . null $ intersect x y
+   in takeN overlapping numGroups groups
 
-takeN :: Int -> [a] -> [[a]]
-takeN 0 _ = [[]]
-takeN _ [] = []
-takeN n (x : xs) =
-  let withX = fmap (x :) $ takeN (n - 1) xs
-      withoutX = takeN n xs
+-- all the ways to select n elements from a list
+takeN :: (a -> a -> Bool) -> Int -> [a] -> [[a]]
+takeN _ 0 _ = [[]]
+takeN _ _ [] = []
+takeN eq n (x : xs) =
+  let withX = fmap (x :) $ takeN eq (n - 1) (filter (not . eq x) xs)
+      withoutX = takeN eq n xs
    in withX ++ withoutX
-
-partition :: Int -> [[Int]] -> [[[Int]]]
-partition _ [] = []
-partition nGroups (x : xs) =
-  let rest = filter (null . intersect x) xs
-   in fmap (x :) (takeN (nGroups - 1) rest) ++ partition nGroups xs
