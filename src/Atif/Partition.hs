@@ -6,29 +6,21 @@ where
 
 import Data.List (intersect)
 
-data StudentCategory = UBB | LSJ deriving (Show, Eq)
-
-data Student = Student
-  { name :: String,
-    category :: StudentCategory
-  }
-  deriving (Show, Eq)
-
 groups :: Int -> [Int] -> [[[Int]]]
-groups nGroups students =
-  let combinations = takeN (length students `div` nGroups) students
+groups nGroups xs =
+  let combinations = takeN (length xs `div` nGroups) xs
     in partition nGroups combinations
 
 takeN :: Int -> [a] -> [[a]]
 takeN 0 _ = [[]]
 takeN _ [] = []
-takeN n (x : students) =
-  let withX = fmap (x :) $ takeN (n - 1) students
-      withoutX = takeN n students
+takeN n (x : xs) =
+  let withX = fmap (x :) $ takeN (n - 1) xs
+      withoutX = takeN n xs
    in withX ++ withoutX
 
 partition :: Int -> [[Int]] -> [[[Int]]]
 partition _ [] = []
-partition nGroups (student : students) =
-  let rest = filter (null . intersect student) students
-   in fmap (student :) (takeN (nGroups - 1) rest) ++ partition nGroups students
+partition nGroups (x : xs) =
+  let rest = filter (null . intersect x) xs
+   in fmap (x :) (takeN (nGroups - 1) rest) ++ partition nGroups xs
