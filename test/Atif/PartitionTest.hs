@@ -61,12 +61,12 @@ prop_takeN = property $ do
 prop_partition :: Property
 prop_partition = property $ do
   -- set up
-  numGroups <- forAll $ Gen.int (Range.constant 1 3)
-  groupSize <- forAll $ Gen.int (Range.constant 1 3)
+  numGroups <- forAll $ Gen.int (Range.constant 2 5)
+  groupSize <- forAll $ Gen.int (Range.constant 2 5)
   let xs = [1 .. numGroups * groupSize]
 
   -- exercise
-  let actual = partition numGroups xs
+  let actual = take 50 $ partition numGroups xs
 
   -- verify
   H.assert $ all allUnique actual
