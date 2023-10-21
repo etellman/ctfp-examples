@@ -11,8 +11,8 @@ import Test.Tasty
 import Test.Tasty.HUnit
 import Test.Tasty.Hedgehog
 
-prop_takeNZero :: Property
-prop_takeNZero = property $ do
+prop_combinationsZero :: Property
+prop_combinationsZero = property $ do
   -- set up
   xs <-
     forAll $
@@ -21,15 +21,15 @@ prop_takeNZero = property $ do
         (Gen.int $ Range.constant (-100) 100)
 
   -- exercise and verify
-  takeN (==) 0 xs === [[]]
+  combinations (==) 0 xs === [[]]
 
-prop_takeNNoChoices :: Property
-prop_takeNNoChoices = property $ do
+prop_combinationsNoChoices :: Property
+prop_combinationsNoChoices = property $ do
   -- set up
   n <- forAll $ Gen.int (Range.constant 1 100)
 
   -- exercise and verify
-  H.assert $ null $ takeN (==) n ([] :: [Int])
+  H.assert $ null $ combinations (==) n ([] :: [Int])
 
 prop_takeOne :: Property
 prop_takeOne = property $ do
@@ -41,17 +41,17 @@ prop_takeOne = property $ do
         (Gen.int $ Range.constant (-100) 100)
 
   -- exercise and verify
-  takeN (==) 1 xs === fmap (: []) xs
+  combinations (==) 1 xs === fmap (: []) xs
 
-prop_takeN :: Property
-prop_takeN = property $ do
+prop_combinations :: Property
+prop_combinations = property $ do
   -- set up
   howMany <- forAll $ Gen.int (Range.constant 10 30)
   n <- forAll $ Gen.int (Range.constant 1 4)
   let xs = [1 .. howMany]
 
   -- exercise
-  let actual = takeN (==) n xs
+  let actual = combinations (==) n xs
 
   -- verify
   length actual === howMany `choose` n
@@ -61,14 +61,15 @@ prop_takeN = property $ do
 prop_partition :: Property
 prop_partition = property $ do
   -- set up
-  numGroups <- forAll $ Gen.int (Range.constant 2 5)
-  groupSize <- forAll $ Gen.int (Range.constant 2 5)
+  numGroups <- forAll $ Gen.int (Range.constant 2 6)
+  groupSize <- forAll $ Gen.int (Range.constant 2 4)
   let xs = [1 .. numGroups * groupSize]
 
   -- exercise
-  let actual = take 50 $ partition numGroups xs
+  let actual = takeN 100 $ take 10000 $ partition numGroups xs
 
   -- verify
+  H.assert $ (not . null) actual
   H.assert $ all allUnique actual
   H.assert $ allUnique actual
   H.assert $ all (\g -> length g == numGroups) actual
@@ -79,11 +80,11 @@ tests =
   testGroup
     "Atif.PartitionTest"
     [ testGroup
-        "takeN"
-        [ testProperty "select none" $ prop_takeNZero,
-          testProperty "no choices" $ prop_takeNNoChoices,
+        "combinations"
+        [ testProperty "select none" $ prop_combinationsZero,
+          testProperty "no choices" $ prop_combinationsNoChoices,
           testProperty "take one" $ prop_takeOne,
-          testProperty "take n" $ prop_takeN,
+          testProperty "take n" $ prop_combinations,
           testCase "take 3" $ do
             let xs = [1 .. 5] :: [Int]
                 expected =
@@ -98,7 +99,7 @@ tests =
                     [2, 4, 5],
                     [3, 4, 5]
                   ]
-            takeN (==) 3 xs @?= expected
+            combinations (==) 3 xs @?= expected
         ],
       testGroup
         "partition"
