@@ -18,8 +18,7 @@ partition :: Eq a => Int -> [a] -> [[[a]]]
 partition numGroups xs =
   let elementsPerGroup = length xs `div` numGroups
       groups = combinations (==) elementsPerGroup xs
-      partitions = combinations (\x y -> not . null $ intersect x y) numGroups groups
-    in partitions
+   in combinations (\x y -> not . null $ intersect x y) numGroups groups
 
 -- all the ways to select n elements from a list
 combinations :: (a -> a -> Bool) -> Int -> [a] -> [[a]]
