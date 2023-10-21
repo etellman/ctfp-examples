@@ -1,4 +1,3 @@
-import Atif.ChapterTest
 import Ch03.ChapterTest
 import Ch04.ChapterTest
 import Ch05.ChapterTest
@@ -39,7 +38,6 @@ main = do
           Ch21.ChapterTest.chapterTests,
           Ch22.ChapterTest.chapterTests,
           Ch23.ChapterTest.chapterTests,
-          Ch24.ChapterTest.chapterTests,
-          Atif.ChapterTest.chapterTests
+          Ch24.ChapterTest.chapterTests
         ]
     )
